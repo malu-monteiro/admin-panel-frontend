@@ -38,7 +38,6 @@ import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(utc);
 dayjs.extend(isBetween);
 
-// Esquemas de validação
 const step1Schema = z.object({
   service: z.string().min(1, "Por favor, selecione um serviço"),
   date: z.date({
@@ -80,6 +79,18 @@ export function SchedulingButton() {
     }>
   >([]);
 
+  const isDateDisabled = (date: Date) => {
+    const isPastDate = dayjs(date).isBefore(dayjs().startOf("day"));
+    const isTodayAfterHours =
+      dayjs(date).isSame(dayjs(), "day") && dayjs().hour() >= 18;
+    const isBlockedDate = blockedDates.some((blockedDate) =>
+      dayjs(date).isSame(blockedDate, "day")
+    );
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+    return isPastDate || isTodayAfterHours || isBlockedDate || isWeekend;
+  };
+
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
@@ -97,7 +108,6 @@ export function SchedulingButton() {
           .filter((block) => block.isBlocked === true)
           .map((block) => new Date(block.date));
 
-        // Horários bloqueados
         const timeBlocksData = response.data
           .filter((block) => !block.isBlocked && block.blockedSlots)
           .flatMap(
@@ -297,12 +307,7 @@ export function SchedulingButton() {
                     setSelectedDate(date);
                   }
                 }}
-                disabled={(date) =>
-                  dayjs(date).isBefore(dayjs().startOf("day")) ||
-                  blockedDates.some((blockedDate) =>
-                    dayjs(date).isSame(blockedDate, "day")
-                  )
-                }
+                disabled={isDateDisabled}
                 className="rounded-md border"
               />
               {step1Form.formState.errors.date && (
