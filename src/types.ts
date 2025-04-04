@@ -4,6 +4,12 @@ export interface BlockedSlot {
   startTime: string;
   endTime: string;
 }
+export interface Block {
+  id: number;
+  date: string;
+  isBlocked: boolean;
+  blockedSlots: BlockedSlot[] | null;
+}
 
 export interface Availability {
   id: number;

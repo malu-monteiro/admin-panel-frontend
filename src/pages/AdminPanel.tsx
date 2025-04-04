@@ -6,21 +6,10 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
+import { Block } from "@/types";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-export interface Block {
-  id: number;
-  date: string;
-  isBlocked: boolean;
-  blockedSlots: BlockedSlot[] | null;
-}
-
-export interface BlockedSlot {
-  id: number;
-  startTime: string;
-  endTime: string;
-}
 
 const AdminPanel = () => {
   const [date, setDate] = useState<string | null>(null);
