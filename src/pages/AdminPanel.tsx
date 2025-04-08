@@ -8,6 +8,17 @@ import timezone from "dayjs/plugin/timezone";
 
 import { Block } from "@/types";
 
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -17,31 +28,42 @@ const AdminPanel = () => {
   const [endTime, setEndTime] = useState<string>("");
   const [blocks, setBlocks] = useState<Block[]>([]);
 
+  const hours = Array.from({ length: 11 }, (_, i) => {
+    const hour = i + 8;
+    return `${hour.toString().padStart(2, "0")}:00`;
+  }).sort((a, b) => a.localeCompare(b));
+
   const API_URL = "http://localhost:3000";
 
   const TIMEZONE = "America/Sao_Paulo";
 
+  const fetchBlocks = async () => {
+    try {
+      const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
+        params: {
+          startDate: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
+          endDate: dayjs().add(1, "month").format("YYYY-MM-DD"),
+        },
+      });
+      setBlocks(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar bloqueios:", error);
+      setBlocks([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchBlocks = async () => {
-      try {
-        const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
-          params: {
-            startDate: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
-            endDate: dayjs().add(1, "month").format("YYYY-MM-DD"),
-          },
-        });
-        setBlocks(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar bloqueios:", error);
-        setBlocks([]);
-      }
-    };
     fetchBlocks();
   }, []);
 
   const handleBlockSlot = async () => {
     if (!date || !startTime || !endTime) {
       alert("Preencha todos os campos.");
+      return;
+    }
+
+    if (startTime >= endTime) {
+      alert("O horário de início deve ser menor que o de fim.");
       return;
     }
 
@@ -52,7 +74,7 @@ const AdminPanel = () => {
         endTime: dayjs.tz(`${date}T${endTime}`, TIMEZONE).format("HH:mm"),
       });
       alert("Horário bloqueado com sucesso!");
-      window.location.reload();
+      fetchBlocks();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data?.error || "Erro ao bloquear horário");
@@ -93,7 +115,7 @@ const AdminPanel = () => {
       });
 
       alert("Dia bloqueado com sucesso!");
-      window.location.reload();
+      fetchBlocks();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data?.error || "Erro ao bloquear dia");
@@ -127,52 +149,66 @@ const AdminPanel = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Painel Administrador</h1>
 
-      <div className="grid gap-4 mb-8">
+      <Card className="p-4 mb-6 grid gap-4 w-full max-w-md">
         <div>
           <label className="block mb-1">Data</label>
-          <input
-            type="date"
-            onChange={(e) => setDate(e.target.value)}
-            className="p-2 border rounded w-full"
+          <Calendar
+            mode="single"
+            selected={date ? new Date(date) : undefined}
+            onSelect={(selectedDate) =>
+              setDate(selectedDate?.toISOString().split("T")[0] || null)
+            }
+            className="rounded-md border"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block mb-1">Início</label>
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="p-2 border rounded w-full"
-            />
+            <Select onValueChange={setStartTime} value={startTime}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecionar hora" />
+              </SelectTrigger>
+              <SelectContent>
+                {hours.map((hour) => (
+                  <SelectItem key={hour} value={hour}>
+                    {hour}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
             <label className="block mb-1">Fim</label>
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              className="p-2 border rounded w-full"
-            />
+            <Select onValueChange={setEndTime} value={endTime}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecionar hora" />
+              </SelectTrigger>
+              <SelectContent>
+                {hours.map((hour) => (
+                  <SelectItem key={hour} value={hour}>
+                    {hour}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={handleBlockSlot}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
+          <Button onClick={handleBlockSlot} aria-label="Bloquear horário">
             Bloquear Horário
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
             onClick={handleBlockDay}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            aria-label="Bloquear dia"
           >
             Bloquear Dia Inteiro
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       <h2 className="text-xl font-bold mb-2">Bloqueios Ativos</h2>
       <div className="overflow-x-auto">

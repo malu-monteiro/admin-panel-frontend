@@ -1,10 +1,11 @@
 module.exports = {
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        slate: {
-          800: "hsl(215.3, 25%, 26.7%)",
-          700: "hsl(215.3, 25%, 35%)",
+        neutral: {
+          800: "hsl(0 0% 14.9%)",
+          700: "hsl(0 0% 25.1%)",
         },
       },
     },

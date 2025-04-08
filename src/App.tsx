@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import "./index.css";
+
 import { SchedulingButton } from "./pages/SchedulingButton";
 import AdminPanel from "./pages/AdminPanel";
 
