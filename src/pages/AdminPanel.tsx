@@ -5,9 +5,14 @@ import axios from "axios";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+import { isDateDisabled } from "@/utils/isDateDisabled";
 
 import { Block } from "@/types";
 
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
@@ -16,13 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(isSameOrAfter);
 
-const AdminPanel = () => {
+export function AdminPanel() {
   const [date, setDate] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
@@ -37,6 +41,21 @@ const AdminPanel = () => {
 
   const TIMEZONE = "America/Sao_Paulo";
 
+  const isFutureBlock = (block: Block) => {
+    const now = dayjs().tz(TIMEZONE);
+
+    if (block.isBlocked) {
+      const blockDate = dayjs(block.date).tz(TIMEZONE).startOf("day");
+      return blockDate.isSameOrAfter(now.startOf("day"));
+    }
+
+    return (
+      block.blockedSlots?.some((slot) =>
+        dayjs(slot.endTime).tz(TIMEZONE).isAfter(now)
+      ) ?? false
+    );
+  };
+
   const fetchBlocks = async () => {
     try {
       const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
@@ -45,7 +64,8 @@ const AdminPanel = () => {
           endDate: dayjs().add(1, "month").format("YYYY-MM-DD"),
         },
       });
-      setBlocks(response.data);
+      const filteredBlocks = response.data.filter(isFutureBlock);
+      setBlocks(filteredBlocks);
     } catch (error) {
       console.error("Erro ao buscar bloqueios:", error);
       setBlocks([]);
@@ -158,6 +178,12 @@ const AdminPanel = () => {
             onSelect={(selectedDate) =>
               setDate(selectedDate?.toISOString().split("T")[0] || null)
             }
+            disabled={(date) =>
+              isDateDisabled(date, {
+                blocks,
+                allowAfterHours: false,
+              })
+            }
             className="rounded-md border"
           />
         </div>
@@ -251,15 +277,8 @@ const AdminPanel = () => {
                     </td>
                     <td className="py-2 px-4 border">Horário</td>
                     <td className="py-2 px-4 border">
-                      {dayjs
-                        .utc(slot.startTime)
-                        .tz("America/Sao_Paulo")
-                        .format("HH:mm")}
-                      -{" "}
-                      {dayjs
-                        .utc(slot.endTime)
-                        .tz("America/Sao_Paulo")
-                        .format("HH:mm")}
+                      {dayjs.utc(slot.startTime).tz(TIMEZONE).format("HH:mm")}-{" "}
+                      {dayjs.utc(slot.endTime).tz(TIMEZONE).format("HH:mm")}
                     </td>
                     <td className="py-2 px-4 border">
                       <button
@@ -280,6 +299,4 @@ const AdminPanel = () => {
       </div>
     </div>
   );
-};
-
-export default AdminPanel;
+}

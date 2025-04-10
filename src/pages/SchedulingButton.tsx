@@ -35,6 +35,8 @@ import { Availability, AppointmentData } from "@/types";
 
 import isBetween from "dayjs/plugin/isBetween";
 
+import { isDateDisabled } from "@/utils/isDateDisabled";
+
 dayjs.extend(utc);
 dayjs.extend(isBetween);
 
@@ -78,18 +80,6 @@ export function SchedulingButton() {
       endTime: string;
     }>
   >([]);
-
-  const isDateDisabled = (date: Date) => {
-    const isPastDate = dayjs(date).isBefore(dayjs().startOf("day"));
-    const isTodayAfterHours =
-      dayjs(date).isSame(dayjs(), "day") && dayjs().hour() >= 18;
-    const isBlockedDate = blockedDates.some((blockedDate) =>
-      dayjs(date).isSame(blockedDate, "day")
-    );
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-
-    return isPastDate || isTodayAfterHours || isBlockedDate || isWeekend;
-  };
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
@@ -307,7 +297,12 @@ export function SchedulingButton() {
                     setSelectedDate(date);
                   }
                 }}
-                disabled={isDateDisabled}
+                disabled={(date) =>
+                  isDateDisabled(date, {
+                    blockedDates,
+                    allowAfterHours: false,
+                  })
+                }
                 className="rounded-md border"
               />
               {step1Form.formState.errors.date && (
