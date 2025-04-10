@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios from "axios";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import isBetween from "dayjs/plugin/isBetween";
 
-import { Calendar } from "@/components/ui/calendar";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -26,19 +30,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-import { toast } from "sonner";
 
 import { Availability, AppointmentData } from "@/types";
-
-import isBetween from "dayjs/plugin/isBetween";
 
 import { isDateDisabled } from "@/utils/isDateDisabled";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
+
+const API_URL = "http://localhost:3000";
 
 const step1Schema = z.object({
   service: z.string().min(1, "Por favor, selecione um serviço"),
@@ -57,16 +57,8 @@ const step2Schema = z.object({
 type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
 
-const services = [
-  "Corte de Cabelo",
-  "Barba",
-  "Corte + Barba",
-  "Coloração",
-] as const;
-
-const API_URL = "http://localhost:3000";
-
 export function SchedulingButton() {
+  const [services, setServices] = useState<string[]>([]);
   const [step, setStep] = useState<1 | 2>(1);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,6 +72,27 @@ export function SchedulingButton() {
       endTime: string;
     }>
   >([]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/services`);
+        setServices(response.data.map((s: { name: string }) => s.name));
+      } catch (error) {
+        console.error("Erro ao buscar serviços:", error);
+
+        setServices([
+          "Pet Grooming",
+          "Healthcare",
+          "Daycare",
+          "Training",
+          "Hyginic care",
+        ]);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
@@ -158,7 +171,6 @@ export function SchedulingButton() {
     setAvailableTimes(generateAvailableTimes());
   }, [selectedDate, timeBlocks]);
 
-  // Formulários
   const step1Form = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
     mode: "onChange",
