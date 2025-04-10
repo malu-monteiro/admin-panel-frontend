@@ -345,7 +345,7 @@ export function SchedulingButton() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
+              className="w-full hover:bg-accent hover:text-muted-foreground "
               disabled={!step1Form.formState.isValid}
             >
               Continuar
