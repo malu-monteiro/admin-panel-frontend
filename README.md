@@ -4,7 +4,7 @@ Check-list:
 
 \*\* Painel Admin:
 
-[ ] Adicionar controle serviços (criar, editar, excluir).
+[x] Adicionar controle serviços (criar, editar, excluir).
 
 \*\* Página de Login:
 

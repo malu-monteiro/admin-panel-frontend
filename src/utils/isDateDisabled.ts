@@ -19,26 +19,26 @@ export function isDateDisabled(
   options: Options = {}
 ): boolean {
   const {
-    timezone = "America/Sao_Paulo",
     blockWeekends = true,
     allowAfterHours = true,
     blockedDates = [],
     blocks = [],
   } = options;
 
-  const now = dayjs().tz(timezone);
-  const selected = dayjs(dateToCheck).tz(timezone);
+  const now = dayjs().utc();
+  const selected = dayjs(dateToCheck).utc();
 
   const isPast = selected.isBefore(now, "day");
   const isWeekend = selected.day() === 0 || selected.day() === 6;
+
   const isTodayAfterHours = selected.isSame(now, "day") && now.hour() >= 18;
 
   const isInBlockedDates = blockedDates.some((d) =>
-    dayjs(d).tz(timezone).isSame(selected, "day")
+    dayjs(d).utc().isSame(selected, "day")
   );
 
   const isInBlocks = blocks.some((block) => {
-    const blockDate = dayjs.utc(block.date).tz(timezone);
+    const blockDate = dayjs.utc(block.date);
     return block.isBlocked && blockDate.isSame(selected, "day");
   });
 

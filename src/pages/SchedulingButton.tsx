@@ -58,6 +58,11 @@ type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
 
 export function SchedulingButton() {
+  const [workingHours, setWorkingHours] = useState<{
+    startTime: "08:00";
+    endTime: "18:00";
+    isDefault?: boolean;
+  } | null>(null);
   const [services, setServices] = useState<string[]>([]);
   const [step, setStep] = useState<1 | 2>(1);
   const [open, setOpen] = useState(false);
@@ -72,6 +77,27 @@ export function SchedulingButton() {
       endTime: string;
     }>
   >([]);
+
+  useEffect(() => {
+    const fetchWorkingHours = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/working-hours`);
+        setWorkingHours({
+          ...response.data,
+          isDefault: false,
+        });
+      } catch (error) {
+        console.error("Erro ao buscar horários:", error);
+        setWorkingHours({
+          startTime: "08:00",
+          endTime: "18:00",
+          isDefault: true,
+        });
+      }
+    };
+
+    fetchWorkingHours();
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -101,25 +127,27 @@ export function SchedulingButton() {
           `${API_URL}/api/blocks`,
           {
             params: {
-              startDate: dayjs().format("YYYY-MM-DD"),
-              endDate: dayjs().add(3, "month").format("YYYY-MM-DD"),
+              startDate: dayjs().utc().format("YYYY-MM-DD"),
+              endDate: dayjs().utc().add(3, "month").format("YYYY-MM-DD"),
             },
           }
         );
 
         const fullyBlockedDates = response.data
           .filter((block) => block.isBlocked === true)
-          .map((block) => new Date(block.date));
+          .map((block) => {
+            const localDate = dayjs.utc(block.date).local().toDate();
+            return localDate;
+          });
 
         const timeBlocksData = response.data
           .filter((block) => !block.isBlocked && block.blockedSlots)
           .flatMap(
             (block) =>
               block.blockedSlots?.map((slot) => ({
-                date: dayjs(slot.startTime).format("YYYY-MM-DD"),
-
-                startTime: dayjs(slot.startTime).format("HH:mm"),
-                endTime: dayjs(slot.endTime).format("HH:mm"),
+                date: dayjs.utc(slot.startTime).local().format("YYYY-MM-DD"),
+                startTime: dayjs.utc(slot.startTime).local().format("HH:mm"),
+                endTime: dayjs.utc(slot.endTime).local().format("HH:mm"),
               })) || []
           );
 
@@ -134,23 +162,28 @@ export function SchedulingButton() {
   }, []);
 
   useEffect(() => {
-    if (!selectedDate) {
+    if (!selectedDate || !workingHours) {
       setAvailableTimes([]);
       return;
     }
 
     const generateAvailableTimes = () => {
-      const times: string[] = [];
-      const startHour = 8;
-      const endHour = 18;
-      const dateStr = dayjs(selectedDate).format("YYYY-MM-DD");
+      if (!selectedDate || !workingHours) return [];
 
+      const [startHour] = workingHours.startTime.split(":").map(Number);
+      const [endHour, endMinute] = workingHours.endTime.split(":").map(Number);
+
+      const times: string[] = [];
+      const dateStr = dayjs(selectedDate).format("YYYY-MM-DD");
       const dayTimeBlocks = timeBlocks.filter(
         (block) => block.date === dateStr
       );
 
-      for (let hour = startHour; hour <= endHour; hour++) {
-        const timeString = `${hour.toString().padStart(2, "0")}:00`;
+      const totalSlots = endHour - startHour + (endMinute > 0 ? 1 : 0);
+
+      for (let i = 0; i < totalSlots; i++) {
+        const currentHour = startHour + i;
+        const timeString = `${currentHour.toString().padStart(2, "0")}:00`;
 
         const isBlocked = dayTimeBlocks.some((block) => {
           const slotTime = dayjs(`2000-01-01 ${timeString}`);
@@ -169,7 +202,7 @@ export function SchedulingButton() {
     };
 
     setAvailableTimes(generateAvailableTimes());
-  }, [selectedDate, timeBlocks]);
+  }, [selectedDate, timeBlocks, workingHours]);
 
   const step1Form = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -192,7 +225,7 @@ export function SchedulingButton() {
       const step1Data = step1Form.getValues();
       const appointmentData: AppointmentData = {
         service: step1Data.service,
-        date: dayjs(step1Data.date).format("YYYY-MM-DD"),
+        date: dayjs(step1Data.date).utc().format("YYYY-MM-DD"),
         time: step1Data.time,
         name: data.name,
         phone: data.phone,
@@ -304,9 +337,14 @@ export function SchedulingButton() {
                 selected={step1Form.watch("date")}
                 onSelect={(date) => {
                   if (date) {
-                    step1Form.setValue("date", date);
+                    const localDate = new Date(
+                      date.getFullYear(),
+                      date.getMonth(),
+                      date.getDate()
+                    );
+                    step1Form.setValue("date", localDate);
                     step1Form.trigger("date");
-                    setSelectedDate(date);
+                    setSelectedDate(localDate);
                   }
                 }}
                 disabled={(date) =>
