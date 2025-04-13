@@ -14,6 +14,7 @@ import { Block, WorkingHours } from "@/types";
 import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
@@ -306,8 +307,8 @@ export function AdminPanel() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-4">
-      <Card className="w-full max-w-4xl p-6">
+    <div className="flex justify-center items-center min-h-screen p-4">
+      <Card className="w-full max-w-4xl p-6 mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Painel Administrador
@@ -321,7 +322,7 @@ export function AdminPanel() {
                 <div className="grid gap-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block mb-1">Abertura</label>
+                      <Label className="block mb-1">Abertura</Label>
                       <Select
                         onValueChange={(value) =>
                           setWorkingHours((prev) =>
@@ -349,7 +350,7 @@ export function AdminPanel() {
                     </div>
 
                     <div>
-                      <label className="block mb-1">Fechamento</label>
+                      <Label className="block mb-1">Fechamento</Label>
                       <Select
                         onValueChange={(value) =>
                           setWorkingHours((prev) =>
@@ -458,7 +459,7 @@ export function AdminPanel() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1">Início</label>
+                  <Label className="block mb-1">Início</Label>
                   <Select onValueChange={setStartTime} value={startTime}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecionar hora" />
@@ -474,7 +475,7 @@ export function AdminPanel() {
                 </div>
 
                 <div>
-                  <label className="block mb-1">Fim</label>
+                  <Label className="block mb-1">Fim</Label>
                   <Select onValueChange={setEndTime} value={endTime}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecionar hora" />
