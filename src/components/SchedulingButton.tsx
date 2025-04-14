@@ -112,7 +112,7 @@ export function SchedulingButton() {
           "Healthcare",
           "Daycare",
           "Training",
-          "Hyginic care",
+          "Hygienic care",
         ]);
       }
     };
@@ -272,11 +272,8 @@ export function SchedulingButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-          variant="slate"
-        >
-          Agendar
+        <Button className="bg-[#596bca] hover:bg-[#4a5ab5] text-white">
+          Schedule a visit
         </Button>
       </DialogTrigger>
 

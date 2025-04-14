@@ -431,7 +431,7 @@ export function AdminPanel() {
                       size="icon"
                       onClick={() => handleDeleteService(service.id)}
                     >
-                      <XIcon className="w-5 h-5" />
+                      <XIcon className="w-5 h-5 text-white" />
                     </Button>
                   </li>
                 ))}
