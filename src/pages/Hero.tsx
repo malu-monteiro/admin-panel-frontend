@@ -7,14 +7,11 @@ import { Footer } from "../components/Footer";
 export function Hero() {
   return (
     <div className="relative">
-      {/* Seção Hero - Ajustes principais para mobile */}
       <section className="relative bg-noise to-amber-0 pt-24 pb-32 px-6 md:px-24 flex flex-col md:flex-row items-center justify-center overflow-hidden z-0">
-        {/* Navbar com posicionamento mais seguro para mobile */}
         <div className="absolute top-0 left-0 w-full px-4 md:left-12 md:px-0">
           <Navbar />
         </div>
 
-        {/* Conteúdo de texto - Removemos transform que causava problemas */}
         <div className="relative z-20 max-w-xl text-center md:text-left md:mr-32 mt-16 md:translate-y-[-40px]">
           <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 md:mb-6">
             We give your pet <br className="hidden md:block" /> the care they
@@ -29,7 +26,6 @@ export function Hero() {
           <SchedulingButton />
         </div>
 
-        {/* Imagem - Ajustes de tamanho e posicionamento */}
         <div className="relative mt-8 md:mt-0 md:translate-y-[-40px]">
           <img
             src={Pets}
@@ -39,13 +35,11 @@ export function Hero() {
         </div>
       </section>
 
-      {/* Seção de Serviços - Ajuste de overlap e padding */}
       <div className="relative z-30 -mt-20 lg:-mt-36 px-6 md:px-24">
         <ServicesSection />
       </div>
 
-      {/* Footer - Ajuste de padding */}
-      <div className="mb-8 px-6 md:px-24">
+      <div className="mb-5 px-6 md:px-24">
         <Footer />
       </div>
     </div>
