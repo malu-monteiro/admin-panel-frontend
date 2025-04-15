@@ -108,10 +108,10 @@ export function SchedulingButton() {
         console.error("Erro ao buscar serviços:", error);
 
         setServices([
-          "Pet Grooming",
           "Healthcare",
           "Daycare",
           "Training",
+          "Pet Grooming",
           "Hygienic care",
         ]);
       }
@@ -273,7 +273,7 @@ export function SchedulingButton() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-[#596bca] hover:bg-[#4a5ab5] text-white">
-          Schedule a visit
+          Schedule a Service
         </Button>
       </DialogTrigger>
 
