@@ -310,19 +310,17 @@ export function AdminPanel() {
     <div className="flex justify-center items-center min-h-screen p-4">
       <Card className="w-full max-w-4xl p-6 mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Painel Administrador
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold">Admin Panel</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           <div>
-            <h2 className="text-xl font-bold mb-4">Horário de Funcionamento</h2>
+            <h2 className="text-xl font-bold mb-4">Business Hours</h2>
             <Card className="p-4 mb-6 w-full max-w-md">
               {isEditingHours ? (
                 <div className="grid gap-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="block mb-1">Abertura</Label>
+                      <Label className="block mb-1">Opening Time</Label>
                       <Select
                         onValueChange={(value) =>
                           setWorkingHours((prev) =>
@@ -332,7 +330,7 @@ export function AdminPanel() {
                         value={workingHours?.startTime || ""}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecionar hora" />
+                          <SelectValue placeholder="Select Time" />
                         </SelectTrigger>
                         <SelectContent>
                           {Array.from({ length: 24 }, (_, i) => {
@@ -350,7 +348,7 @@ export function AdminPanel() {
                     </div>
 
                     <div>
-                      <Label className="block mb-1">Fechamento</Label>
+                      <Label className="block mb-1">Closing Time</Label>
                       <Select
                         onValueChange={(value) =>
                           setWorkingHours((prev) =>
@@ -360,7 +358,7 @@ export function AdminPanel() {
                         value={workingHours?.endTime || ""}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecionar hora" />
+                          <SelectValue placeholder="Select Time" />
                         </SelectTrigger>
                         <SelectContent>
                           {Array.from({ length: 24 }, (_, i) => {
@@ -379,12 +377,12 @@ export function AdminPanel() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button onClick={handleSaveWorkingHours}>Salvar</Button>
+                    <Button onClick={handleSaveWorkingHours}>Save</Button>
                     <Button
                       variant="outline"
                       onClick={() => setIsEditingHours(false)}
                     >
-                      Cancelar
+                      Cancel
                     </Button>
                   </div>
                 </div>
@@ -396,17 +394,15 @@ export function AdminPanel() {
                       {workingHours?.endTime || "18:00"}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Horário padrão de funcionamento
+                      Default Business Hours
                     </p>
                   </div>
-                  <Button onClick={() => setIsEditingHours(true)}>
-                    Editar
-                  </Button>
+                  <Button onClick={() => setIsEditingHours(true)}>Edit</Button>
                 </div>
               )}
             </Card>
 
-            <h2 className="text-xl font-bold mb-4">Gerenciar Serviços</h2>
+            <h2 className="text-xl font-bold mb-4">Manage Services</h2>
 
             <Card className="p-4 mb-6">
               <div className="flex gap-2 mb-4">
@@ -416,7 +412,7 @@ export function AdminPanel() {
                   onChange={(e) => setNewServiceName(e.target.value)}
                   placeholder="Nome do novo serviço"
                 />
-                <Button onClick={handleAddService}>Adicionar</Button>
+                <Button onClick={handleAddService}>Add</Button>
               </div>
 
               <ul className="border rounded divide-y">
@@ -438,7 +434,7 @@ export function AdminPanel() {
               </ul>
             </Card>
 
-            <h2 className="text-xl font-bold mb-4">Gerenciar Datas</h2>
+            <h2 className="text-xl font-bold mb-4">Manage Dates</h2>
             <Card className="p-4 mb-6 grid gap-4 w-full max-w-md">
               <div>
                 <Calendar
@@ -459,10 +455,10 @@ export function AdminPanel() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="block mb-1">Início</Label>
+                  <Label className="block mb-1">Start</Label>
                   <Select onValueChange={setStartTime} value={startTime}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecionar hora" />
+                      <SelectValue placeholder="Select Time" />
                     </SelectTrigger>
                     <SelectContent>
                       {hours.map((hour) => (
@@ -475,10 +471,10 @@ export function AdminPanel() {
                 </div>
 
                 <div>
-                  <Label className="block mb-1">Fim</Label>
+                  <Label className="block mb-1">End</Label>
                   <Select onValueChange={setEndTime} value={endTime}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecionar hora" />
+                      <SelectValue placeholder="Select Time" />
                     </SelectTrigger>
                     <SelectContent>
                       {hours.map((hour) => (
@@ -492,29 +488,29 @@ export function AdminPanel() {
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleBlockSlot} aria-label="Bloquear horário">
-                  Bloquear Horário
+                <Button onClick={handleBlockSlot} aria-label="Block Time Slot">
+                  Block Time Slot
                 </Button>
                 <Button
                   variant="destructive"
                   onClick={handleBlockDay}
                   aria-label="Bloquear dia"
                 >
-                  Bloquear Dia Inteiro
+                  Block Entire Day
                 </Button>
               </div>
             </Card>
 
-            <h2 className="text-xl font-bold mb-2">Bloqueios Ativos</h2>
+            <h2 className="text-xl font-bold mb-2">Active Blocks</h2>
             <Card>
               <div className="overflow-x-auto">
                 <table className="min-w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="py-2 px-4 text-left">Data</th>
-                      <th className="py-2 px-4 text-left">Tipo</th>
-                      <th className="py-2 px-4 text-left">Horário</th>
-                      <th className="py-2 px-4 text-left">Ações</th>
+                      <th className="py-2 px-4 text-left">Date</th>
+                      <th className="py-2 px-4 text-left">Type</th>
+                      <th className="py-2 px-4 text-left">Time</th>
+                      <th className="py-2 px-4 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -525,7 +521,7 @@ export function AdminPanel() {
                             <td className="py-2 px-4">
                               {dayjs.utc(block.date).format("DD/MM/YYYY")}
                             </td>
-                            <td className="py-2 px-4">Dia Inteiro</td>
+                            <td className="py-2 px-4">All Day</td>
                             <td className="py-2 px-4">-</td>
                             <td className="py-2 px-4">
                               <Button
@@ -533,7 +529,7 @@ export function AdminPanel() {
                                 size="sm"
                                 onClick={() => handleUnblock(block.id)}
                               >
-                                Remover
+                                Remove
                               </Button>
                             </td>
                           </tr>

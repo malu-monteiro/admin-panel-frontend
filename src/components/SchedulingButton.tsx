@@ -234,14 +234,14 @@ export function SchedulingButton() {
 
       await axios.post(`${API_URL}/api/appointments`, appointmentData);
 
-      toast.success("Agendamento realizado com sucesso!");
+      toast.success("Appointment successfully scheduled!");
 
       setOpen(false);
       setStep(1);
       step1Form.reset();
       step2Form.reset();
     } catch (error) {
-      let errorMessage = "Ocorreu um erro ao agendar.";
+      let errorMessage = "An error occurred while scheduling the appointment.";
       if (axios.isAxiosError(error)) {
         errorMessage = error.response?.data?.message || errorMessage;
       }
@@ -278,14 +278,12 @@ export function SchedulingButton() {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {step === 1
-              ? "Solicite o agendamento de um serviço"
-              : "Informações adicionais"}
+            {step === 1 ? "Book a service" : "Additional information"}
           </DialogTitle>
           <DialogDescription>
             {step === 1
-              ? "Selecione o serviço e horário desejado"
-              : "Preencha seus dados para concluir o agendamento"}
+              ? "Select your service and preferred time"
+              : "Fill in your details to complete the booking"}
           </DialogDescription>
         </DialogHeader>
 
@@ -296,7 +294,7 @@ export function SchedulingButton() {
           >
             <div>
               <label className="block text-sm font-medium mb-1">
-                Selecione um serviço
+                Select a service
               </label>
               <Select
                 onValueChange={(value) => {
@@ -306,7 +304,7 @@ export function SchedulingButton() {
                 value={step1Form.watch("service")}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione..." />
+                  <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map((service) => (
@@ -325,7 +323,7 @@ export function SchedulingButton() {
 
             <div>
               <label className="block text-sm font-medium mb-1">
-                Selecione uma data
+                Choose a date
               </label>
               <Calendar
                 mode="single"
@@ -360,7 +358,7 @@ export function SchedulingButton() {
             {selectedDate && (
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Selecione um horário
+                  Select a time
                 </label>
                 <Select
                   onValueChange={(value) => {
@@ -370,7 +368,7 @@ export function SchedulingButton() {
                   value={step1Form.watch("time")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione..." />
+                    <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
                     {availableTimes.map((time) => (
@@ -393,7 +391,7 @@ export function SchedulingButton() {
               className="w-full hover:bg-accent hover:text-muted-foreground "
               disabled={!step1Form.formState.isValid}
             >
-              Continuar
+              Continue
             </Button>
           </form>
         ) : (
@@ -403,9 +401,9 @@ export function SchedulingButton() {
           >
             <div>
               <label className="block text-sm font-medium mb-1">
-                Nome completo
+                Full name
               </label>
-              <Input {...step2Form.register("name")} placeholder="Seu nome" />
+              <Input {...step2Form.register("name")} placeholder="Your name" />
               {step2Form.formState.errors.name && (
                 <p className="text-sm text-red-500 mt-1">
                   {step2Form.formState.errors.name.message}
@@ -414,7 +412,9 @@ export function SchedulingButton() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Telefone</label>
+              <label className="block text-sm font-medium mb-1">
+                Phone number
+              </label>
               <Input
                 {...step2Form.register("phone")}
                 placeholder="(00) 00000-0000"
@@ -429,10 +429,10 @@ export function SchedulingButton() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Mensagem</label>
+              <label className="block text-sm font-medium mb-1">Message</label>
               <Textarea
                 {...step2Form.register("message")}
-                placeholder="Escreva uma mensagem"
+                placeholder="Write a message to the service provider"
                 className="min-h-[100px]"
               />
             </div>
@@ -444,14 +444,14 @@ export function SchedulingButton() {
                 className="flex-1"
                 onClick={() => setStep(1)}
               >
-                Voltar
+                Back
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-blue-500 hover:bg-blue-600"
                 disabled={loading || !step2Form.formState.isValid}
               >
-                {loading ? "Enviando..." : "Confirmar agendamento"}
+                {loading ? "Sending..." : "Confirm appointment"}
               </Button>
             </div>
           </form>
