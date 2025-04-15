@@ -272,9 +272,7 @@ export function SchedulingButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#596bca] hover:bg-[#4a5ab5] text-white">
-          Schedule a Service
-        </Button>
+        <Button variant="custom">Schedule a Service</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
