@@ -1,8 +1,8 @@
 import { ServiceCard } from "./ServiceCard";
-import Healthcare from "../assets/healthcare.png";
-import Daycare from "../assets/daycare.png";
-import Training from "../assets/training.png";
-import HygienicCare from "../assets/hygienic-care.png";
+import Healthcare from "../../assets/healthcare.png";
+import Daycare from "../../assets/daycare.png";
+import Training from "../../assets/training.png";
+import HygienicCare from "../../assets/hygienic-care.png";
 
 type Service = {
   icon: string;

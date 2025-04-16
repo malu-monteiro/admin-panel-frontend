@@ -17,7 +17,7 @@ function Calendar({
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row gap-2",
-        month: "flex flex-col gap-4",
+        month: "flex flex-col gap-2",
         caption: "flex justify-center pt-1 relative items-center w-full",
         caption_label: "text-sm font-medium",
         nav: "flex items-center gap-1",
@@ -28,7 +28,7 @@ function Calendar({
         nav_button_previous: "absolute left-1 text-slate-300",
         nav_button_next: "absolute right-1 text-slate-300",
         table: "w-full border-collapse space-x-1",
-        head_row: "flex",
+        head_row: "flex gap-x-1",
         head_cell:
           "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",

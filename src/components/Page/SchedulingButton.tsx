@@ -272,7 +272,7 @@ export function SchedulingButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="custom">Schedule a Service</Button>
+        <Button variant="appointment">Schedule a Service</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">

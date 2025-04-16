@@ -2,10 +2,6 @@ Gerenciar bloqueios de disponibilidade em um sistema de agendamento (ex: calend�
 
 Check-list:
 
-\*\* Painel Admin:
-
-[x] Adicionar controle serviços (criar, editar, excluir).
-
 \*\* Página de Login:
 
 [ ] Implementar autenticação de administrador.
@@ -14,12 +10,20 @@ Check-list:
 [ ] Adicionar opção de recuperação de senha.
 [ ] Implementar fluxo de recuperação de senha via e-mail.
 
-\*\* Página Principal:
+\*\* Erros [BusinessHours]:
 
-[ ] Definir estrutura e layout da página.
-[ ] Adicionar chamadas para ação (CTA).
-[ ] Adicionar elementos visuais (imagens, ícones, etc).
-[ ] Garantir responsividade para dispositivos móveis.
+'hours' is assigned a value but never used.eslint@typescript-eslint/no-unused-vars
 
-- Links úteis:
-  https://thenounproject.com/browse/icons/term/dog-training/
+[ActiveBlocks]:
+
+Cannot find name 'slot'.ts(2304)
+
+[ ] Não salva bloqueio de dia atual.
+
+[ManageDates]:
+
+[ ] Bug visual, ao clicar em dia ativo, dia inativo, fica ativo.
+
+[version-switcher]:
+
+[ ] Alterar itens para: Perfil / Editar perfil / Alterar E-mail / Alterar Senha / Sair
