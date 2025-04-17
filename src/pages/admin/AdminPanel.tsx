@@ -20,7 +20,9 @@ import { ManageServices } from "@/components/admin/ManageServices";
 import { ManageDates } from "@/components/admin/ManageDates";
 import { ActiveBlocks } from "@/components/admin/ActiveBlocks";
 
-export function Panel() {
+import { Title } from "@/components/Title";
+
+export function AdminPanel() {
   const [activePanel, setActivePanel] = useState("Business Hours");
   const handleMenuClick = (panelName: string) => {
     setActivePanel(panelName);
@@ -42,28 +44,31 @@ export function Panel() {
   };
 
   return (
-    <SidebarProvider>
-      <AppSidebar onSelectItem={handleMenuClick} />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Admin Panel</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{activePanel}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {renderActiveSection()}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <Title>Panel</Title>
+      <SidebarProvider>
+        <AppSidebar onSelectItem={handleMenuClick} />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">Admin Panel</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{activePanel}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </header>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            {renderActiveSection()}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </>
   );
 }
