@@ -21,7 +21,6 @@ interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const initialData = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
       title: "Building Your Schedule",
@@ -90,12 +89,7 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <span className="text-base font-semibold">Welcome!</span>
-            </SidebarMenuButton>
+            <span className="text-base font-semibold">Welcome!</span>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

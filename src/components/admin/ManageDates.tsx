@@ -54,6 +54,7 @@ export function ManageDates() {
     if (!workingHours) return [];
     const [startHour] = workingHours.startTime.split(":").map(Number);
     const [endHour] = workingHours.endTime.split(":").map(Number);
+
     const timeSlots = [];
     for (let hour = startHour; hour <= endHour; hour++) {
       timeSlots.push(`${hour.toString().padStart(2, "0")}:00`);
@@ -99,15 +100,20 @@ export function ManageDates() {
       alert("Preencha todos os campos.");
       return;
     }
-    if (startTime >= endTime) {
-      alert("O horário de início deve ser menor que o de fim.");
+
+    if (
+      !/^([01]\d|2[0-3]):([0-5]\d)$/.test(startTime) ||
+      !/^([01]\d|2[0-3]):([0-5]\d)$/.test(endTime)
+    ) {
+      alert("Formato de horário inválido. Use HH:mm (ex: 08:00)");
       return;
     }
+
     try {
       await axios.post(`${API_URL}/api/blocks`, {
-        date: dayjs(date, TIMEZONE).format("YYYY-MM-DD"),
-        startTime: dayjs(`${date}T${startTime}`, TIMEZONE).toISOString(),
-        endTime: dayjs(`${date}T${endTime}`, TIMEZONE).toISOString(),
+        date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
+        startTime,
+        endTime,
       });
       alert("Horário bloqueado com sucesso!");
       fetchBlocks();
@@ -145,8 +151,7 @@ export function ManageDates() {
       }
 
       await axios.post(`${API_URL}/api/blocks`, {
-        date: dayjs(date).format("YYYY-MM-DD"),
-        isBlocked: true,
+        date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
       });
       alert("Dia bloqueado com sucesso!");
       fetchBlocks();

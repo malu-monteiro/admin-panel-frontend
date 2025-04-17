@@ -96,7 +96,7 @@ export function ActiveBlocks() {
                     <tr key={`day-${block.id}`} className="border-b">
                       <td className="py-2 px-4">
                         {dayjs
-                          .utc(slot.startTime)
+                          .utc(block.date)
                           .tz(TIMEZONE)
                           .format("DD/MM/YYYY")}
                       </td>
@@ -114,30 +114,32 @@ export function ActiveBlocks() {
                     </tr>
                   );
                 }
-                return block.blockedSlots?.map((slot) => (
-                  <tr key={`slot-${slot.id}`} className="border-b">
-                    <td className="py-2 px-4">
-                      {dayjs
-                        .utc(slot.startTime)
-                        .tz(TIMEZONE)
-                        .format("DD/MM/YYYY")}
-                    </td>
-                    <td className="py-2 px-4">Horário</td>
-                    <td className="py-2 px-4">
-                      {dayjs.utc(slot.startTime).tz(TIMEZONE).format("HH:mm")}-{" "}
-                      {dayjs.utc(slot.endTime).tz(TIMEZONE).format("HH:mm")}
-                    </td>
-                    <td className="py-2 px-4">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleUnblock(slot.id)}
-                      >
-                        Remove
-                      </Button>
-                    </td>
-                  </tr>
-                ));
+                return (
+                  block.blockedSlots?.map((slot) => (
+                    <tr key={`slot-${slot.id}`} className="border-b">
+                      <td className="py-2 px-4">
+                        {dayjs
+                          .utc(slot.startTime)
+                          .tz(TIMEZONE)
+                          .format("DD/MM/YYYY")}
+                      </td>
+                      <td className="py-2 px-4">Horário</td>
+                      <td className="py-2 px-4">
+                        {dayjs.utc(slot.startTime).tz(TIMEZONE).format("HH:mm")}
+                        - {dayjs.utc(slot.endTime).tz(TIMEZONE).format("HH:mm")}
+                      </td>
+                      <td className="py-2 px-4">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleUnblock(slot.id)}
+                        >
+                          Remove
+                        </Button>
+                      </td>
+                    </tr>
+                  )) || []
+                );
               })}
           </tbody>
         </table>

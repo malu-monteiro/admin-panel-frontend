@@ -81,6 +81,13 @@ export function BusinessHours() {
     }
   };
 
+  const generateHourOptions = () => {
+    return [...Array(24)].map((_, i) => {
+      const hour = i.toString().padStart(2, "0");
+      return `${hour}:00`;
+    });
+  };
+
   return (
     <div>
       <Card className="p-4 w-full max-w-md">
@@ -102,16 +109,11 @@ export function BusinessHours() {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {[...Array(24)]
-                      .flatMap((_, i) => {
-                        const hour = i.toString().padStart(2, "0");
-                        return [`${hour}:00`, `${hour}:30`];
-                      })
-                      .map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
+                    {generateHourOptions().map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -129,16 +131,11 @@ export function BusinessHours() {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {[...Array(24)]
-                      .flatMap((_, i) => {
-                        const hour = i.toString().padStart(2, "0");
-                        return [`${hour}:00`, `${hour}:30`];
-                      })
-                      .map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
+                    {generateHourOptions().map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
