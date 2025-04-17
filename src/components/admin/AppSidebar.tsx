@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useState } from "react";
 
-import { VersionSwitcher } from "@/components/admin/version-switcher";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -13,6 +13,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavUser } from "@/components/admin/NavUser";
+import { SettingsIcon } from "lucide-react";
 
 interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   onSelectItem?: (panelName: string) => void;
@@ -44,6 +46,19 @@ const initialData = {
       ],
     },
   ],
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "#",
+      icon: SettingsIcon,
+    },
+  ],
 };
 
 export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
@@ -73,10 +88,16 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={navData.versions}
-          defaultVersion={navData.versions[0]}
-        />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <span className="text-base font-semibold">Welcome!</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         {navData.navMain.map((group, groupIndex) => (
@@ -102,6 +123,9 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={initialData.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
