@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import Automotive from "../assets/automotive-business.jpg";
-import CoffeeShop from "../assets/coffeeshop-business.jpg";
-import Hairdresser from "../assets/hairdresser-business.jpg";
-import Petshop from "../assets/petshop-business.jpg";
-import Restaurant from "../assets/restaurant-business.jpg";
-import Spa from "../assets/spa-business.jpg";
+import Automotive from "@/assets/slideshow/automotive-business.jpg";
+import CoffeeShop from "@/assets/slideshow/coffeeshop-business.jpg";
+import Hairdresser from "@/assets/slideshow/hairdresser-business.jpg";
+import Petshop from "@/assets/slideshow/petshop-business.jpg";
+import Restaurant from "@/assets/slideshow/restaurant-business.jpg";
+import Spa from "@/assets/slideshow/spa-business.jpg";
 
 const Images = [Automotive, CoffeeShop, Hairdresser, Petshop, Restaurant, Spa];
 

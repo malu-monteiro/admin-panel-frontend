@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from "@/components/admin/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,12 +15,12 @@ import {
 } from "@/components/ui/sidebar";
 import { useState } from "react";
 
-import { BusinessHours } from "@/components/Sidebar/BusinessHours";
-import { ManageServices } from "@/components/Sidebar/ManageServices";
-import { ManageDates } from "@/components/Sidebar/ManageDates";
-import { ActiveBlocks } from "@/components/Sidebar/ActiveBlocks";
+import { BusinessHours } from "@/components/admin/BusinessHours";
+import { ManageServices } from "@/components/admin/ManageServices";
+import { ManageDates } from "@/components/admin/ManageDates";
+import { ActiveBlocks } from "@/components/admin/ActiveBlocks";
 
-export default function NewAdminPanel() {
+export function Panel() {
   const [activePanel, setActivePanel] = useState("Business Hours");
   const handleMenuClick = (panelName: string) => {
     setActivePanel(panelName);

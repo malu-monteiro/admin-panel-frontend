@@ -1,10 +1,9 @@
-import { SchedulingButton } from "../components/Page/SchedulingButton";
-import Pets from "../assets/pets.png";
-import { Navbar } from "../components/Page/Navbar";
-import { ServicesSection } from "../components/Page/ServicesSection";
-import { Footer } from "../components/Page/Footer";
-
+import Pets from "@/assets/hero/pets.png";
 import { motion } from "framer-motion";
+import { SchedulingButton } from "@/components/home/SchedulingButton";
+import { Navbar } from "@/components/home/Navbar";
+import { ServicesSection } from "@/components/home/ServicesSection";
+import { Footer } from "@/components/home/Footer";
 
 export function Hero() {
   return (

@@ -1,4 +1,4 @@
-import PawPrint from "../../assets/paw.png";
+import PawPrint from "../../assets/Navbar/paw.png";
 
 export function Navbar() {
   return (

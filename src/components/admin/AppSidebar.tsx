@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 
-import { VersionSwitcher } from "@/components/version-switcher";
+import { VersionSwitcher } from "@/components/admin/version-switcher";
 import {
   Sidebar,
   SidebarContent,

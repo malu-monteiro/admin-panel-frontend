@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isDateDisabled } from "@/utils/isDateDisabled";
+import { isDateDisabled } from "@/utils/is-date-disbled";
 import { WorkingHours, Block } from "@/types";
 
 dayjs.extend(utc);

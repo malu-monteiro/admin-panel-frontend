@@ -1,20 +1,18 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import "./index.css";
 
-import { Hero } from "./pages/Hero";
-import { AdminPanel } from "./pages/AdminPanel";
-import NewAdminPanel from "./pages/NewAdminPanel";
-import Login from "./pages/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { Hero } from "./pages/home/Hero";
+import { SignIn } from "./pages/auth/SignIn";
+import { Panel } from "./pages/admin/Panel";
 
 export function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Hero />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/test" element={<NewAdminPanel />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/admin" element={<Panel />} />
       </Routes>
     </Router>
   );

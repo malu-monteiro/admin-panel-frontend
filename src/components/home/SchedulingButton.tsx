@@ -33,7 +33,7 @@ import {
 
 import { Availability, AppointmentData } from "@/types";
 
-import { isDateDisabled } from "@/utils/isDateDisabled";
+import { isDateDisabled } from "@/utils/is-date-disbled";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
