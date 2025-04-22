@@ -1,14 +1,26 @@
-// hooks/useAuth.ts
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function useAuth() {
+type UseAuthOptions = {
+  // exemplo: "/admin-panel"
+  redirectToIfAuthenticated?: string;
+  // exemplo: "/sign-in"
+  redirectToIfNotAuthenticated?: string;
+};
+
+export function useAuth(options?: UseAuthOptions) {
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/sign-in", { replace: true });
+    const isAuthenticated = !!token;
+
+    if (isAuthenticated && options?.redirectToIfAuthenticated) {
+      navigate(options.redirectToIfAuthenticated, { replace: true });
     }
-  }, [navigate]);
+
+    if (!isAuthenticated && options?.redirectToIfNotAuthenticated) {
+      navigate(options.redirectToIfNotAuthenticated, { replace: true });
+    }
+  }, [navigate, options]);
 }

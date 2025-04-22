@@ -25,7 +25,7 @@ import { Title } from "@/components/Title";
 import { useAuth } from "@/hooks/useAuth";
 
 export function AdminPanel() {
-  useAuth();
+  useAuth({ redirectToIfNotAuthenticated: "/sign-in" });
 
   const [activePanel, setActivePanel] = useState("Business Hours");
   const handleMenuClick = (panelName: string) => {

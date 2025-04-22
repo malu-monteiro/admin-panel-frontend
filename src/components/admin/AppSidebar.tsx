@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Sidebar,
@@ -20,48 +20,22 @@ interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   onSelectItem?: (panelName: string) => void;
 }
 
-const initialData = {
-  navMain: [
-    {
-      title: "Building Your Schedule",
-      items: [
-        {
-          title: "Business Hours",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Manage Services",
-          url: "#",
-        },
-        {
-          title: "Manage Dates",
-          url: "#",
-        },
-        {
-          title: "Active Blocks",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
-    },
-  ],
-};
-
 export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
   const [navData, setNavData] = useState(initialData);
+  const [userEmail, setUserEmail] = useState("your@email.com");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("email");
+    if (stored) {
+      setUserEmail(stored);
+    }
+  }, []);
+
+  const user = {
+    name: "Your User",
+    email: userEmail,
+    avatar: "/avatars/shadcn.jpg",
+  };
 
   const handleItemClick = (
     groupIndex: number,
@@ -118,8 +92,43 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={initialData.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );
 }
+
+const initialData = {
+  navMain: [
+    {
+      title: "Building Your Schedule",
+      items: [
+        {
+          title: "Business Hours",
+          url: "#",
+          isActive: true,
+        },
+        {
+          title: "Manage Services",
+          url: "#",
+        },
+        {
+          title: "Manage Dates",
+          url: "#",
+        },
+        {
+          title: "Active Blocks",
+          url: "#",
+        },
+      ],
+    },
+  ],
+
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "#",
+      icon: SettingsIcon,
+    },
+  ],
+};

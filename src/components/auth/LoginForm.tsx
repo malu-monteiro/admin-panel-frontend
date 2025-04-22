@@ -26,6 +26,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("email", data.email);
       navigate("/admin-panel", { replace: true });
       return;
     },
