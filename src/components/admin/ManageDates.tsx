@@ -66,8 +66,8 @@ export function ManageDates() {
     try {
       const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
         params: {
-          startDate: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
-          endDate: dayjs().add(1, "month").format("YYYY-MM-DD"),
+          startDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+          endDate: dayjs().endOf("month").format("YYYY-MM-DD"),
         },
       });
 
@@ -167,14 +167,20 @@ export function ManageDates() {
       <div>
         <Calendar
           mode="single"
-          selected={date ? new Date(date) : undefined}
-          onSelect={(selectedDate) =>
-            setDate(selectedDate?.toISOString().split("T")[0] || null)
+          selected={
+            date ? dayjs(date).tz("America/Sao_Paulo").toDate() : undefined
           }
+          onSelect={(selectedDate) => {
+            if (!selectedDate) return;
+            setDate(
+              dayjs(selectedDate).tz("America/Sao_Paulo").format("YYYY-MM-DD")
+            );
+          }}
           disabled={(dateItem) =>
             isDateDisabled(dateItem, {
               blocks,
               allowAfterHours: false,
+              timezone: "America/Sao_Paulo",
             })
           }
           className="rounded-md border"

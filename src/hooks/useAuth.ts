@@ -1,0 +1,14 @@
+// hooks/useAuth.ts
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+export function useAuth() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/sign-in", { replace: true });
+    }
+  }, [navigate]);
+}

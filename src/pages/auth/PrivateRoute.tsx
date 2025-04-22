@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
-import { Navigate } from "react-router-dom";
-import { isAuthenticated } from "@/utils/auth";
+export function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const token = localStorage.getItem("token");
+  const location = useLocation();
 
-interface PrivateRouteProps {
-  children: ReactNode;
-}
+  if (!token) {
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
+  }
 
-export function PrivateRoute({ children }: PrivateRouteProps) {
-  return isAuthenticated() ? children : <Navigate to="/sign-in" replace />;
+  return children;
 }

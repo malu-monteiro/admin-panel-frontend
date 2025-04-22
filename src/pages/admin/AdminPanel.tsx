@@ -22,7 +22,11 @@ import { ActiveBlocks } from "@/components/admin/ActiveBlocks";
 
 import { Title } from "@/components/Title";
 
+import { useAuth } from "@/hooks/useAuth";
+
 export function AdminPanel() {
+  useAuth();
+
   const [activePanel, setActivePanel] = useState("Business Hours");
   const handleMenuClick = (panelName: string) => {
     setActivePanel(panelName);

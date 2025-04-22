@@ -19,34 +19,36 @@ export function isDateDisabled(
   options: Options = {}
 ): boolean {
   const {
+    blocks = [],
     blockWeekends = true,
     allowAfterHours = true,
-    blockedDates = [],
-    blocks = [],
+    timezone = "UTC",
   } = options;
 
-  const now = dayjs().utc();
-  const selected = dayjs(dateToCheck).utc();
+  const now = dayjs().tz(timezone);
+  const selected = dayjs(dateToCheck).tz(timezone);
 
   const isPast = selected.isBefore(now, "day");
-  const isWeekend = selected.day() === 0 || selected.day() === 6;
+  const isWeekend =
+    blockWeekends && (selected.day() === 0 || selected.day() === 6);
+  const isTodayAfterHours =
+    !allowAfterHours && selected.isSame(now, "day") && now.hour() >= 18;
 
-  const isTodayAfterHours = selected.isSame(now, "day") && now.hour() >= 18;
+  const isBlocked = blocks.some((block) => {
+    const blockDate = dayjs(block.date).tz(timezone);
 
-  const isInBlockedDates = blockedDates.some((d) =>
-    dayjs(d).utc().isSame(selected, "day")
-  );
+    if (block.isBlocked && blockDate.isSame(selected, "day")) {
+      return true;
+    }
 
-  const isInBlocks = blocks.some((block) => {
-    const blockDate = dayjs.utc(block.date);
-    return block.isBlocked && blockDate.isSame(selected, "day");
+    return (
+      block.blockedSlots?.some((slot) => {
+        const start = dayjs(slot.startTime).tz(timezone);
+        const end = dayjs(slot.endTime).tz(timezone);
+        return selected.isBetween(start, end, null, "[]");
+      }) || false
+    );
   });
 
-  return (
-    isPast ||
-    (!allowAfterHours && isTodayAfterHours) ||
-    (blockWeekends && isWeekend) ||
-    isInBlockedDates ||
-    isInBlocks
-  );
+  return isPast || isTodayAfterHours || isWeekend || isBlocked;
 }

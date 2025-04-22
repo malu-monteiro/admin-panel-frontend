@@ -1,5 +1,4 @@
 import { LoginForm } from "@/components/auth/LoginForm";
-
 import { Title } from "@/components/Title";
 
 export function SignIn() {

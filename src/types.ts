@@ -1,16 +1,20 @@
-// src/types.ts
-
 export interface WorkingHours {
   startTime: string;
   endTime: string;
   isDefault?: boolean;
 }
 
+export interface BlockedSlot {
+  id: number;
+  startTime: string;
+  endTime: string;
+}
+
 export interface Availability {
   id: number;
   date: string;
   isBlocked: boolean;
-  blockedSlots: BlockedSlot[] | null;
+  blockedSlots: BlockedSlot[];
 }
 
 export interface Options {
@@ -22,11 +26,6 @@ export interface Options {
   };
 }
 
-export interface BlockedSlot {
-  id: number;
-  startTime: string;
-  endTime: string;
-}
 export interface Block {
   id: number;
   date: string;
