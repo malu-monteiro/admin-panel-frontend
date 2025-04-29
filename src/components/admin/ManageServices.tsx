@@ -5,16 +5,16 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
+import API from "@/lib/api/client";
 
 export function ManageServices() {
-  const API_URL = "http://localhost:3000";
   const [services, setServices] = useState<{ id: number; name: string }[]>([]);
   const [newServiceName, setNewServiceName] = useState("");
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/services`);
+        const response = await API.get("/api/services");
         setServices(response.data);
       } catch (error) {
         console.error("Erro ao buscar serviços:", error);
@@ -30,7 +30,7 @@ export function ManageServices() {
       return;
     }
     try {
-      const response = await axios.post(`${API_URL}/api/services`, {
+      const response = await axios.post("/api/services", {
         name: trimmedName,
       });
       setServices([...services, response.data]);
@@ -48,7 +48,7 @@ export function ManageServices() {
   const handleDeleteService = async (id: number) => {
     if (!confirm("Tem certeza que deseja remover este serviço?")) return;
     try {
-      await axios.delete(`${API_URL}/api/services/${id}`);
+      await axios.delete("/api/services/${id}");
       setServices(services.filter((s) => s.id !== id));
     } catch (error) {
       if (axios.isAxiosError(error)) {

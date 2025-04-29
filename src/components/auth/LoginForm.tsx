@@ -7,15 +7,17 @@ import Slideshow from "@/components/auth/Slideshow";
 
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 type LoginFormProps = React.ComponentProps<"div">;
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
+  const { login } = useAuthContext();
   const navigate = useNavigate();
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
-      const response = await fetch("/auth/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
@@ -25,10 +27,24 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       return response.json();
     },
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("email", data.email);
+      localStorage.removeItem("requiresEmailUpdate");
+      localStorage.removeItem("tempAdminId");
+
+      login(data.token, {
+        name: data.name || "Admin",
+        email: data.email,
+        avatar: "",
+      });
+
+      if (data.requiresEmailUpdate) {
+        localStorage.setItem("requiresEmailUpdate", "true");
+        localStorage.setItem("tempAdminId", data.adminId);
+      } else {
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("name", data.name || "Admin");
+      }
+
       navigate("/admin-panel", { replace: true });
-      return;
     },
   });
 

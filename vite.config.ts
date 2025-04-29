@@ -8,11 +8,11 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
   server: {
     proxy: {
-      "/auth": "http://localhost:3000",
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
       },
+      "/auth": "http://localhost:3000",
     },
   },
   plugins: [react(), tailwindcss(), svgr()],

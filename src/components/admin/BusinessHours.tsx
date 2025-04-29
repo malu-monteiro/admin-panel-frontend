@@ -15,14 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import API from "@/lib/api/client";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isSameOrAfter);
 
 export function BusinessHours() {
-  const API_URL = "http://localhost:3000";
-
   const [workingHours, setWorkingHours] = useState<{
     startTime: string;
     endTime: string;
@@ -33,7 +32,7 @@ export function BusinessHours() {
   useEffect(() => {
     const loadWorkingHours = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/working-hours`);
+        const response = await API.get("/api/working-hours");
         setWorkingHours({ ...response.data, isDefault: false });
       } catch (error) {
         console.error("Erro ao carregar horários:", error);
@@ -61,7 +60,7 @@ export function BusinessHours() {
   const handleSaveWorkingHours = async () => {
     if (!workingHours) return;
     try {
-      const response = await axios.post(`${API_URL}/api/working-hours`, {
+      const response = await axios.post("/api/working-hours", {
         startTime: workingHours.startTime,
         endTime: workingHours.endTime,
       });

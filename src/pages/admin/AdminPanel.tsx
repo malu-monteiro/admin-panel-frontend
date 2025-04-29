@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BusinessHours } from "@/components/admin/BusinessHours";
 import { ManageServices } from "@/components/admin/ManageServices";
@@ -22,12 +22,34 @@ import { ActiveBlocks } from "@/components/admin/ActiveBlocks";
 
 import { Title } from "@/components/Title";
 
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { User } from "@/types";
 
 export function AdminPanel() {
-  useAuth({ redirectToIfNotAuthenticated: "/sign-in" });
+  const { user, isLoading, updateUser } = useAuthContext();
 
+  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
   const [activePanel, setActivePanel] = useState("Business Hours");
+
+  const safeUser = user || {
+    name: "Admin",
+    email: "admin@exemplo.com",
+    avatar: "/avatars/default.jpg",
+  };
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (localStorage.getItem("requiresEmailUpdate") === "true") {
+      setShowUpdateEmailModal(true);
+      localStorage.removeItem("requiresEmailUpdate");
+    }
+  }, [isLoading]);
+
+  const handleUserUpdate = (newData: Partial<User>) => {
+    updateUser(newData);
+  };
+
   const handleMenuClick = (panelName: string) => {
     setActivePanel(panelName);
   };
@@ -43,15 +65,21 @@ export function AdminPanel() {
       case "Active Blocks":
         return <ActiveBlocks />;
       default:
-        return <div>Selecione um item do menu</div>;
+        return <div>Select item</div>;
     }
   };
 
   return (
     <>
-      <Title>Panel</Title>
+      <Title>Admin Panel</Title>
       <SidebarProvider>
-        <AppSidebar onSelectItem={handleMenuClick} />
+        <AppSidebar
+          onSelectItem={handleMenuClick}
+          user={safeUser}
+          initialAccountOpen={showUpdateEmailModal}
+          onAccountOpenChange={setShowUpdateEmailModal}
+          onUserUpdate={handleUserUpdate}
+        />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />

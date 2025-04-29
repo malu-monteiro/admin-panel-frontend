@@ -1,19 +1,16 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-type UseAuthOptions = {
-  // exemplo: "/admin-panel"
-  redirectToIfAuthenticated?: string;
-  // exemplo: "/sign-in"
-  redirectToIfNotAuthenticated?: string;
-};
+import { UseAuthOptions } from "@/types";
+import { useAuthContext } from "./useAuthContext";
 
 export function useAuth(options?: UseAuthOptions) {
   const navigate = useNavigate();
+  const { user, isLoading } = useAuthContext();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const isAuthenticated = !!token;
+    if (isLoading) return;
+
+    const isAuthenticated = !!user;
 
     if (isAuthenticated && options?.redirectToIfAuthenticated) {
       navigate(options.redirectToIfAuthenticated, { replace: true });
@@ -22,5 +19,5 @@ export function useAuth(options?: UseAuthOptions) {
     if (!isAuthenticated && options?.redirectToIfNotAuthenticated) {
       navigate(options.redirectToIfNotAuthenticated, { replace: true });
     }
-  }, [navigate, options]);
+  }, [navigate, options, user, isLoading]);
 }

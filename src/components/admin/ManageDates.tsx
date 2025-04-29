@@ -18,11 +18,12 @@ import {
 import { isDateDisabled } from "@/utils/is-date-disbled";
 import { WorkingHours, Block } from "@/types";
 
+import API from "@/lib/api/client";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export function ManageDates() {
-  const API_URL = "http://localhost:3000";
   const TIMEZONE = "America/Sao_Paulo";
 
   const [workingHours, setWorkingHours] = useState<WorkingHours | null>(null);
@@ -34,9 +35,7 @@ export function ManageDates() {
   useEffect(() => {
     const loadWorkingHours = async () => {
       try {
-        const response = await axios.get<WorkingHours>(
-          `${API_URL}/api/working-hours`
-        );
+        const response = await API.get<WorkingHours>("/api/working-hours");
         setWorkingHours({ ...response.data, isDefault: false });
       } catch (error) {
         console.error("Erro ao carregar horários:", error);
@@ -64,7 +63,7 @@ export function ManageDates() {
 
   const fetchBlocks = async () => {
     try {
-      const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
+      const response = await axios.get<Block[]>("/api/blocks", {
         params: {
           startDate: dayjs().startOf("month").format("YYYY-MM-DD"),
           endDate: dayjs().endOf("month").format("YYYY-MM-DD"),
@@ -110,7 +109,7 @@ export function ManageDates() {
     }
 
     try {
-      await axios.post(`${API_URL}/api/blocks`, {
+      await axios.post("/api/blocks", {
         date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
         startTime,
         endTime,
@@ -132,7 +131,7 @@ export function ManageDates() {
       return;
     }
     try {
-      const res = await axios.get(`${API_URL}/api/blocks`, {
+      const res = await axios.get("/api/blocks", {
         params: {
           startDate: dayjs(date).format("YYYY-MM-DD"),
           endDate: dayjs(date).format("YYYY-MM-DD"),
@@ -146,11 +145,11 @@ export function ManageDates() {
       }
       if (existingBlock) {
         for (const slot of existingBlock.blockedSlots || []) {
-          await axios.delete(`${API_URL}/api/blocks/${slot.id}`);
+          await axios.delete("/api/blocks/${slot.id}");
         }
       }
 
-      await axios.post(`${API_URL}/api/blocks`, {
+      await axios.post("/api/blocks", {
         date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
       });
       alert("Dia bloqueado com sucesso!");

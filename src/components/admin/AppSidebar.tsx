@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import {
   Sidebar,
@@ -13,29 +12,30 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "@/components/admin/NavUser";
-import { SettingsIcon } from "lucide-react";
 
-interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  onSelectItem?: (panelName: string) => void;
-}
+import { NavUser } from "./NavUser";
 
-export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
+import { AppSidebarProps } from "@/types";
+import { useAuthContext } from "@/hooks/useAuthContext";
+
+export function AppSidebar({
+  onSelectItem,
+  user,
+  initialAccountOpen,
+  onAccountOpenChange,
+  onUserUpdate,
+  ...props
+}: AppSidebarProps) {
   const [navData, setNavData] = useState(initialData);
-  const [userEmail, setUserEmail] = useState("your@email.com");
+  const { user: authUser } = useAuthContext();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("email");
-    if (stored) {
-      setUserEmail(stored);
-    }
-  }, []);
-
-  const user = {
-    name: "Your User",
-    email: userEmail,
-    avatar: "/avatars/shadcn.jpg",
+  const defaultUser = {
+    name: "Usuário",
+    email: "usuario@exemplo.com",
+    avatar: "/avatars/default.jpg",
   };
+
+  const resolvedUser = user || authUser || defaultUser;
 
   const handleItemClick = (
     groupIndex: number,
@@ -53,9 +53,8 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
       newData.navMain[groupIndex].items[itemIndex].isActive = true;
       return newData;
     });
-    if (onSelectItem) {
-      onSelectItem(itemTitle);
-    }
+
+    onSelectItem?.(itemTitle);
   };
 
   return (
@@ -92,7 +91,12 @@ export function AppSidebar({ onSelectItem, ...props }: AppSidebarProps) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser
+          user={resolvedUser}
+          initialAccountOpen={initialAccountOpen}
+          onAccountOpenChange={onAccountOpenChange}
+          onUserUpdate={onUserUpdate}
+        />
       </SidebarFooter>
     </Sidebar>
   );
@@ -121,14 +125,6 @@ const initialData = {
           url: "#",
         },
       ],
-    },
-  ],
-
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
     },
   ],
 };
