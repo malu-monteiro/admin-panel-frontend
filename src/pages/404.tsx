@@ -6,8 +6,8 @@ export function NotFound() {
       <h1 className="text-2xl font-bold">Page not found</h1>
       <p className="text-accent-foreground">
         Back to{" "}
-        <Link to="/admin-panel" className="text-sky-600">
-          Admin Panel
+        <Link to="/" className="text-sky-600">
+          Home
         </Link>
       </p>
     </div>

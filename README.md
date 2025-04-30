@@ -4,26 +4,14 @@ Check-list:
 
 \*\* Página de Login:
 
-[ ] Implementar autenticação de administrador.
-[ ] Criar estrutura de login para administradores.
-[ ] Criar validação de login (erro em caso de credenciais inválidas).
+[x] Implementar autenticação de administrador.
+[x] Criar estrutura de login para administradores.
+[x] Criar validação de login (erro em caso de credenciais inválidas).
 [ ] Adicionar opção de recuperação de senha.
 [ ] Implementar fluxo de recuperação de senha via e-mail.
 
-\*\* Erros [BusinessHours]:
+\*\* Admin Panel:
 
-'hours' is assigned a value but never used.eslint@typescript-eslint/no-unused-vars
-
-[ActiveBlocks]:
-
-Cannot find name 'slot'.ts(2304)
-
-[ ] Não salva bloqueio de dia atual.
-
-[ManageDates]:
-
-[ ] Bug visual, ao clicar em dia ativo, dia inativo, fica ativo.
-
-[version-switcher]:
-
-[ ] Alterar itens para: Perfil / Editar perfil / Alterar E-mail / Alterar Senha / Sair
+[ ] Usuários por default "undefined"
+[ ] Não é possível trocar nome de usuário e e-mail.
+[ ] Adicionar alteração de senha.
