@@ -1,4 +1,8 @@
+import axios from "axios";
+
 import { useForm } from "react-hook-form";
+
+import { AccountModalProps } from "@/types";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,10 +14,37 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-import axios from "axios";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useAuthContext } from "@/hooks/useAuthContext";
-import { FormData, AccountModalProps } from "@/types";
+const accountSchema = z
+  .object({
+    name: z.string().optional(),
+    email: z.string().email(),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().optional(),
+    confirmPassword: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword || data.confirmPassword) {
+      if (data.newPassword !== data.confirmPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Passwords don't match",
+          path: ["confirmPassword"],
+        });
+      }
+      if (!data.currentPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Current password is required",
+          path: ["currentPassword"],
+        });
+      }
+    }
+  });
+
+type AccountFormData = z.infer<typeof accountSchema>;
 
 export function AccountModal({
   user,
@@ -21,58 +52,64 @@ export function AccountModal({
   onOpenChange,
   onUpdate,
 }: AccountModalProps) {
-  const { login } = useAuthContext();
-  const { register, handleSubmit } = useForm<FormData>({
-    defaultValues: user,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<AccountFormData>({
+    resolver: zodResolver(accountSchema),
+    defaultValues: {
+      ...user,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const handleBasicInfoUpdate = async (data: AccountFormData) => {
     try {
-      const isFirstLogin =
-        localStorage.getItem("requiresEmailUpdate") === "true";
-      const adminId = localStorage.getItem("tempAdminId");
+      const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("Token not found");
 
-      if (isFirstLogin && !adminId) {
-        throw new Error("ID de administrador não encontrado");
-      }
-
-      const response = await axios.patch<{ token: string }>(
-        isFirstLogin ? "/auth/confirm-email" : "/auth/update",
-        isFirstLogin
-          ? {
-              adminId,
-              newEmail: data.email,
-              name: data.name,
-            }
-          : data
-      );
-
-      if (isFirstLogin) {
-        localStorage.removeItem("requiresEmailUpdate");
-        localStorage.removeItem("tempAdminId");
-        localStorage.setItem("token", response.data.token);
-
-        login(response.data.token, {
+      await axios.patch(
+        "/auth/update",
+        {
           name: data.name,
           email: data.email,
-          avatar: "",
-        });
-      }
-
-      localStorage.setItem("email", data.email);
-      localStorage.setItem("name", data.name);
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       onUpdate({ email: data.email, name: data.name });
+      toast.success("Data updated!");
+    } catch {
+      toast.error("Error updating data");
+    }
+  };
 
-      toast.success("Dados atualizados!");
-      onOpenChange(false);
-    } catch (error: unknown) {
-      console.error("Erro na atualização:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Ocorreu um erro ao atualizar os dados"
+  const handlePasswordUpdate = async (data: AccountFormData) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("Token not found");
+
+      await axios.patch(
+        "/auth/update-password",
+        {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
+
+      toast.success("Password changed!");
+      reset({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch {
+      toast.error("Error changing password");
     }
   };
 
@@ -82,10 +119,63 @@ export function AccountModal({
         <DialogHeader>
           <DialogTitle>Edit Account</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input {...register("name")} placeholder="Name" />
-          <Input {...register("email")} type="email" placeholder="Email" />
-          <Button type="submit">Save Changes</Button>
+
+        <form
+          onSubmit={handleSubmit(handleBasicInfoUpdate)}
+          className="space-y-4"
+        >
+          <Input
+            {...register("name")}
+            placeholder="Name"
+            error={errors.name?.message}
+          />
+          <Input
+            {...register("email")}
+            type="email"
+            placeholder="Email"
+            error={errors.email?.message}
+          />
+          <Button className="mt-4" type="submit">
+            Save Changes
+          </Button>
+        </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Change Password{" "}
+            </span>
+          </div>
+        </div>
+
+        <form
+          onSubmit={handleSubmit(handlePasswordUpdate)}
+          className="space-y-4"
+        >
+          <Input
+            {...register("currentPassword")}
+            type="password"
+            placeholder="Current Password"
+            error={errors.currentPassword?.message}
+          />
+          <Input
+            {...register("newPassword")}
+            type="password"
+            placeholder="New Password"
+            error={errors.newPassword?.message}
+          />
+          <Input
+            {...register("confirmPassword")}
+            type="password"
+            placeholder="Confirm Password"
+            error={errors.confirmPassword?.message}
+          />
+          <Button className="mt-4" type="submit">
+            Change Password
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

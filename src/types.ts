@@ -55,6 +55,9 @@ export type User = {
 export type FormData = {
   name: string;
   email: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
 };
 
 export type AccountModalProps = {

@@ -7,7 +7,7 @@ export function PrivateRoute({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   if (isLoading) {
-    return null;
+    return <div>Verificando autenticação...</div>;
   }
 
   if (!user) {

@@ -23,12 +23,15 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) throw new Error("Login failed");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Login failed");
+      }
       return response.json();
     },
+
     onSuccess: (data) => {
-      localStorage.removeItem("requiresEmailUpdate");
-      localStorage.removeItem("tempAdminId");
+      localStorage.setItem("authToken", data.token);
 
       login(data.token, {
         name: data.name || "Admin",
@@ -36,15 +39,13 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         avatar: "",
       });
 
-      if (data.requiresEmailUpdate) {
-        localStorage.setItem("requiresEmailUpdate", "true");
-        localStorage.setItem("tempAdminId", data.adminId);
-      } else {
-        localStorage.setItem("email", data.email);
-        localStorage.setItem("name", data.name || "Admin");
-      }
+      setTimeout(() => {
+        navigate("/admin-panel", { replace: true });
+      }, 100);
+    },
 
-      navigate("/admin-panel", { replace: true });
+    onError: (error) => {
+      console.error("Login error:", error);
     },
   });
 

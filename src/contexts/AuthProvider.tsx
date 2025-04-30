@@ -4,15 +4,33 @@ import { User } from "@/types";
 import { fetchUserData } from "@/lib/api/fetchUserData";
 import { AuthContext } from "./AuthContext";
 
+import { jwtDecode } from "jwt-decode";
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const queryClient = useQueryClient();
 
+  const isTokenValid = (token: string) => {
+    try {
+      const decoded = jwtDecode(token) as { exp: number };
+      return decoded.exp * 1000 > Date.now();
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     const verifyAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (!isTokenValid(token)) {
+        console.warn("Expired token detected on loading");
+        logout();
         setIsLoading(false);
         return;
       }
@@ -20,8 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const userData = await fetchUserData(token);
         setUser(userData);
-        localStorage.setItem("email", userData.email);
-        localStorage.setItem("name", userData.name);
       } catch (error) {
         console.error("Failed to verify token:", error);
         logout();
@@ -33,13 +49,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     verifyAuth();
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token || !user) return;
+
+    const interval = setInterval(() => {
+      if (!isTokenValid(token)) {
+        logout();
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [user]);
+
   const login = async (token: string, userData: User) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("authToken", token);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("authToken");
     localStorage.removeItem("requiresEmailUpdate");
 
     setUser(null);
