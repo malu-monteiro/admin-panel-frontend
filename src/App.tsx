@@ -13,6 +13,7 @@ import { AdminPanel } from "./pages/admin/AdminPanel";
 import { PrivateRoute } from "./pages/auth/PrivateRoute";
 
 import { AuthProvider } from "./contexts/AuthProvider";
+import { ResetPassword } from "./pages/auth/ResetPassword";
 
 export function App() {
   return (
@@ -24,6 +25,7 @@ export function App() {
             {/* Public routes */}
             <Route path="/" element={<Hero />} />
             <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected routes */}
             <Route
