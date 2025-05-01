@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +16,8 @@ type LoginFormProps = React.ComponentProps<"div">;
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const { login } = useAuthContext();
   const navigate = useNavigate();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
@@ -59,52 +63,138 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     });
   };
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch(
+        "http://localhost:3000/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to send reset email");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      setEmailSent(true);
+    },
+    onError: (error) => {
+      console.error("Error sending reset email:", error);
+    },
+  });
+
+  const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    forgotPasswordMutation.mutate(formData.get("email") as string);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="relative overflow-hidden">
         <CardContent className="grid relative z-10 p-0 md:grid-cols-2">
-          <form onSubmit={handleSubmit} className="p-6 md:p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome</h1>
-                <p className="text-balance text-muted-foreground">
-                  Login to your Admin Panel account
-                </p>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+          {!showForgotPassword ? (
+            <form onSubmit={handleSubmit} className="p-6 md:p-8">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <h1 className="text-2xl font-bold">Welcome</h1>
+                  <p className="text-balance text-muted-foreground">
+                    Login to your Admin Panel account
+                  </p>
                 </div>
-                <Input id="password" name="password" type="password" required />
-              </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending ? "Logging in..." : "Login"}
-              </Button>
-            </div>
-          </form>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <a
+                      href="#"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="ml-auto text-sm underline-offset-2 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loginMutation.isPending}
+                >
+                  {loginMutation.isPending ? "Logging in..." : "Login"}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleForgotPasswordSubmit} className="p-6 md:p-8">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <h1 className="text-2xl font-bold">Password Recovery</h1>
+                  <p className="text-balance text-muted-foreground">
+                    Enter your email to reset your password
+                  </p>
+                </div>
+                {emailSent ? (
+                  <div className="text-center text-green-500">
+                    We send a link to your email
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="m@example.com"
+                        required
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={forgotPasswordMutation.isPending}
+                    >
+                      {forgotPasswordMutation.isPending
+                        ? "Sending..."
+                        : "Send Reset Link"}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowForgotPassword(false)}
+                    >
+                      Back to login
+                    </Button>
+                  </>
+                )}
+              </div>
+            </form>
+          )}
 
           <div className="hidden md:block absolute right-0 inset-y-[-24px] w-1/2 rounded-r-xl overflow-hidden">
             <Slideshow />
