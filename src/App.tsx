@@ -11,6 +11,7 @@ import { Hero } from "./pages/home/Hero";
 import { SignIn } from "./pages/auth/SignIn";
 import { AdminPanel } from "./pages/admin/AdminPanel";
 import { PrivateRoute } from "./pages/auth/PrivateRoute";
+
 import { AuthProvider } from "./contexts/AuthProvider";
 
 export function App() {
@@ -20,11 +21,11 @@ export function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Rotas públicas */}
+            {/* Public routes */}
             <Route path="/" element={<Hero />} />
             <Route path="/sign-in" element={<SignIn />} />
 
-            {/* Rotas protegidas */}
+            {/* Protected routes */}
             <Route
               path="/admin-panel"
               element={
@@ -34,6 +35,7 @@ export function App() {
               }
             />
 
+            {/* 404 route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

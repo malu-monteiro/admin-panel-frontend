@@ -23,6 +23,8 @@ import {
 
 import { AccountModal } from "./AccountModal";
 
+import { useAuthContext } from "@/hooks/useAuthContext";
+
 export function NavUser({
   user,
   onUserUpdate,
@@ -40,6 +42,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(initialAccountOpen);
+  const { logout } = useAuthContext();
   const navigate = useNavigate();
 
   const handleOpenChange = (open: boolean) => {
@@ -48,7 +51,7 @@ export function NavUser({
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    logout();
     navigate("/sign-in");
   };
 

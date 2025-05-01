@@ -11,13 +11,13 @@ export function useAuth(options?: UseAuthOptions) {
     if (isLoading) return;
 
     const isAuthenticated = !!user;
+    const redirectToIfAuthenticated = options?.redirectToIfAuthenticated;
+    const redirectToIfNotAuthenticated = options?.redirectToIfNotAuthenticated;
 
-    if (isAuthenticated && options?.redirectToIfAuthenticated) {
-      navigate(options.redirectToIfAuthenticated, { replace: true });
-    }
-
-    if (!isAuthenticated && options?.redirectToIfNotAuthenticated) {
-      navigate(options.redirectToIfNotAuthenticated, { replace: true });
+    if (isAuthenticated && redirectToIfAuthenticated) {
+      navigate(redirectToIfAuthenticated, { replace: true });
+    } else if (!isAuthenticated && redirectToIfNotAuthenticated) {
+      navigate(redirectToIfNotAuthenticated, { replace: true });
     }
   }, [navigate, options, user, isLoading]);
 }

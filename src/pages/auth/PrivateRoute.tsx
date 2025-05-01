@@ -14,5 +14,5 @@ export function PrivateRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }

@@ -13,7 +13,7 @@ export function Hero() {
       <Title>Home</Title>
       <div className="relative">
         <section className="relative bg-noise to-amber-0 pt-24 pb-32 px-6 md:px-24 flex flex-col md:flex-row items-center justify-center overflow-hidden z-0">
-          <div className="absolute top-0 left-20 w-full px-4 md:left-12 md:px-0">
+          <div className="absolute top-0 left-0 w-full px-6 md:px-24">
             <Navbar />
           </div>
 
