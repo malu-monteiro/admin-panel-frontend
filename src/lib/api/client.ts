@@ -18,4 +18,22 @@ API.interceptors.request.use(
   }
 );
 
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "/sign-in";
+    }
+
+    if (error.message) {
+      error.message = error.response.data?.error || "Unknown error";
+    } else if (error.request) {
+      error.message = "No response from the server";
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default API;

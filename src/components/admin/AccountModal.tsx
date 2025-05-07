@@ -1,9 +1,14 @@
 import axios from "axios";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AccountModalProps } from "@/types";
 
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,20 +17,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import API from "@/lib/api/client";
 
 const accountSchema = z
   .object({
-    name: z.string().optional(),
-    email: z.string().email(),
+    name: z.string().min(1, "Required").optional(),
+    email: z.string().email().optional(),
     currentPassword: z.string().optional(),
-    newPassword: z.string().optional(),
+    newPassword: z
+      .string()
+      .optional()
+      .refine((pass) => !pass || pass.length >= 6, "Minimum 6 characters"),
     confirmPassword: z.string().optional(),
   })
   .superRefine((data, ctx) => {
+    if (data.newPassword && !/(?=.*[A-Za-z])(?=.*\d)/.test(data.newPassword)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Must contain letter and number",
+        path: ["newPassword"],
+      });
+    }
     if (data.newPassword || data.confirmPassword) {
       if (data.newPassword !== data.confirmPassword) {
         ctx.addIssue({
@@ -52,6 +65,8 @@ export function AccountModal({
   onOpenChange,
   onUpdate,
 }: AccountModalProps) {
+  const [isUpdatingBasicInfo, setIsUpdatingBasicInfo] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -68,48 +83,55 @@ export function AccountModal({
   });
 
   const handleBasicInfoUpdate = async (data: AccountFormData) => {
+    setIsUpdatingBasicInfo(true);
+
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("Token not found");
+      const response = await API.patch("/auth/update", {
+        name: data.name,
+        email: data.email,
+      });
 
-      await axios.patch(
-        "/auth/update",
-        {
-          name: data.name,
-          email: data.email,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      if (response.data.requiresVerification) {
+        toast.info("Verification email sent to new address");
+        onOpenChange(false);
+      }
 
-      onUpdate({ email: data.email, name: data.name });
+      onUpdate({
+        name: data.name ?? user.name,
+        email: response.data.requiresVerification
+          ? user.email
+          : data.email ?? user.email,
+      });
       toast.success("Data updated!");
-    } catch {
-      toast.error("Error updating data");
+    } catch (error) {
+      let message = "Error updating data";
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data?.error || message;
+      }
+      toast.error(message);
+    } finally {
+      setIsUpdatingBasicInfo(false);
     }
   };
 
   const handlePasswordUpdate = async (data: AccountFormData) => {
+    setIsUpdatingPassword(true);
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("Token not found");
-
-      await axios.patch(
-        "/auth/update-password",
-        {
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await API.patch("/auth/update-password", {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
 
       toast.success("Password changed!");
       reset({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } catch {
-      toast.error("Error changing password");
+    } catch (error) {
+      let message = "Error changing password";
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data?.error || message;
+      }
+      toast.error(message);
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -135,8 +157,8 @@ export function AccountModal({
             placeholder="Email"
             error={errors.email?.message}
           />
-          <Button className="mt-4" type="submit">
-            Save Changes
+          <Button className="mt-4" type="submit" disabled={isUpdatingBasicInfo}>
+            {isUpdatingBasicInfo ? "Saving..." : "Save Changes"}
           </Button>
         </form>
 
@@ -173,8 +195,8 @@ export function AccountModal({
             placeholder="Confirm Password"
             error={errors.confirmPassword?.message}
           />
-          <Button className="mt-4" type="submit">
-            Change Password
+          <Button className="mt-4" type="submit" disabled={isUpdatingPassword}>
+            {isUpdatingPassword ? "Updating..." : "Change Password"}
           </Button>
         </form>
       </DialogContent>

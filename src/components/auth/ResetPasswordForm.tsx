@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import Slideshow from "./Slideshow";
-
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+
+import Slideshow from "./Slideshow";
+
+import { ErrorResponse } from "@/types";
 
 export function ResetPasswordForm() {
   const [searchParams] = useSearchParams();
@@ -16,6 +18,24 @@ export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/sign-in", { state: { error: "Invalid reset link " } });
+    }
+  }, [token, navigate]);
+
+  const handleApiError = (error: unknown): string => {
+    if (error instanceof Error) {
+      try {
+        const errorData: ErrorResponse = JSON.parse(error.message);
+        return errorData.message || errorData.error || error.message;
+      } catch {
+        return error.message;
+      }
+    }
+    return "An unknown error ocurred";
+  };
 
   const resetPasswordMutation = useMutation({
     mutationFn: async (newPassword: string) => {
@@ -28,19 +48,21 @@ export function ResetPasswordForm() {
         }
       );
 
+      const data = await response.json();
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData || "Password reset failed");
+        throw new Error(JSON.stringify(data));
       }
-      return response.json();
+      return data;
     },
 
     onSuccess: () => {
-      navigate("/sign-in", { replace: true });
+      navigate("/sign-in", {
+        replace: true,
+        state: { success: "Password reset successfully!" },
+      });
     },
-    onError: (error) => {
-      console.error("Reset password error:", error);
-      setError("Failed to reset password. Please try again.");
+    onError: (error: Error) => {
+      setError(handleApiError(error));
     },
   });
 
@@ -49,6 +71,11 @@ export function ResetPasswordForm() {
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
+      setError("Password must contain at least one letter and one number");
       return;
     }
 

@@ -18,6 +18,19 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const navigate = useNavigate();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [forgotPasswordError, setForgotPasswordError] = useState("");
+
+  const handleApiError = (error: unknown): string => {
+    if (error instanceof Error) {
+      try {
+        const errorData = JSON.parse(error.message);
+        return errorData.error || errorData.message || error.message;
+      } catch {
+        return error.message;
+      }
+    }
+    return "An unknown error ocurred";
+  };
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
@@ -48,7 +61,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       }, 100);
     },
 
-    onError: (error) => {
+    onError: (error: Error) => {
+      const errorMessage = handleApiError(error);
+      if (errorMessage.includes("Email not verified")) {
+        navigate("/verify-email");
+      }
       console.error("Login error:", error);
     },
   });
@@ -83,8 +100,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     onSuccess: () => {
       setEmailSent(true);
     },
-    onError: (error) => {
-      console.error("Error sending reset email:", error);
+    onError: (error: Error) => {
+      setForgotPasswordError(handleApiError(error));
     },
   });
 
@@ -172,6 +189,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                         required
                       />
                     </div>
+
+                    {forgotPasswordError && (
+                      <div className="text-red-500 text-center">
+                        {forgotPasswordError}
+                      </div>
+                    )}
 
                     <Button
                       type="submit"

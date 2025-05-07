@@ -1,5 +1,7 @@
 /* Appointment Types */
 
+import axios from "axios";
+
 export type WorkingHours = {
   startTime: string;
   endTime: string;
@@ -96,3 +98,36 @@ export type NavUserProps = {
   onAccountOpenChange?: (open: boolean) => void;
   onUserUpdate: (newData: Partial<User>) => void;
 };
+
+/* Email Validation Types */
+
+export type VerifyEmailResponse = {
+  message: string;
+  newEmail?: string;
+};
+
+/* Error Types */
+
+export type ErrorResponse = {
+  error?: string;
+  message?: string;
+};
+
+export interface ApiResponse<T = any> {
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface UpdateResponse extends ApiResponse {
+  requiresVerification?: boolean;
+  email?: string;
+}
+
+export interface PasswordUpdateResponse extends ApiResponse {}
+
+// Modifique as chamadas:
+const response = await axios.patch<UpdateResponse>("/auth/update");
+
+// No password:
+await axios.patch<PasswordUpdateResponse>("/auth/update-password");
