@@ -6,7 +6,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center px-4 md:px-0">
         <div className="flex items-center gap-2">
           <img src={PawPrint} alt="Paw Icon" className="h-6 w-6" />
-          <span className="text-xl font-bold text-white">Pawfection</span>
+          <span className="text-xl font-bold text-white">Pawfaction</span>
         </div>
       </div>
     </nav>

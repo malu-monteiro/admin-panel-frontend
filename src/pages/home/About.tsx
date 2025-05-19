@@ -14,7 +14,7 @@ export function About() {
             The Best Service
           </h3>
 
-          <div className="h-1 w-24 bg-amber-400 rounded-full mb-6" />
+          <div className="h-1 w-24 bg-amber-300 rounded-full mb-6" />
 
           <div className="space-y-4 text-gray-600">
             <p className="text-sm md:text-base leading-relaxed">

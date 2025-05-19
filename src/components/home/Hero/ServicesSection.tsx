@@ -1,8 +1,8 @@
 import { ServiceCard } from "./ServiceCard";
-import Healthcare from "@/assets/service-section/healthcare.png";
+
 import Daycare from "@/assets/service-section/daycare.png";
 import Training from "@/assets/service-section/training.png";
-import HygienicCare from "@/assets/service-section/hygienic-care.png";
+import Healthcare from "@/assets/service-section/healthcare.png";
 
 type Service = {
   icon: string;
@@ -26,11 +26,6 @@ const services: Service[] = [
     icon: Training,
     title: "Training",
     description: "Obedience and behavior training with positive methods.",
-  },
-  {
-    icon: HygienicCare,
-    title: "Hygienic care",
-    description: "Professional grooming, bathing, and dental care.",
   },
 ];
 

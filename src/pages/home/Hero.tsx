@@ -11,6 +11,7 @@ import { Services } from "./Services";
 import { Reviews } from "./Reviews";
 import Newsletter from "./Newsletter";
 import { Footer } from "@/components/home/Footer";
+import { OurTeam } from "./OurTeam";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -79,6 +80,8 @@ export function Hero() {
         <div className="mt-28 md:mt-44">
           <Reviews />
         </div>
+
+        <OurTeam />
 
         <div className="mt-28 md:mt-44">
           <Newsletter />

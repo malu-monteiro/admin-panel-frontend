@@ -56,10 +56,7 @@ const ReviewCard = ({
     <figure
       className={cn(
         "relative h-full w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
-        // light styles
-        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-        // dark styles
-        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
+        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]"
       )}
     >
       <div className="flex flex-row items-center gap-2">
@@ -85,7 +82,7 @@ export function Reviews() {
       <div className="text-center mb-16">
         <h2 className="text-2xl font-medium text-gray-800 mb-4">Our Reviews</h2>
 
-        <div className="h-1 w-24 bg-amber-400 rounded-full mx-auto" />
+        <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
         <h3 className="text-3xl font-semibold text-gray-900 mt-6">
           What They Say?
         </h3>

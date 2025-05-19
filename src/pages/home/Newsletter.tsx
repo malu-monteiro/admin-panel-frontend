@@ -24,7 +24,6 @@ export default function Newsletter() {
     setStatus("loading");
 
     try {
-      // Simule envio para API
       await new Promise((res) => setTimeout(res, 1500));
       setStatus("success");
       setEmail("");
@@ -35,13 +34,13 @@ export default function Newsletter() {
   };
 
   return (
-    <div className="bg-gray-50 relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
+    <div className="relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
       <FadeInUp className="mx-auto max-w-6xl">
         <div className="text-center mb-16 max-w-xl mx-auto">
           <h2 className="text-2xl font-medium text-gray-800 mb-4">
             Our News & Promotions
           </h2>
-          <div className="h-1 w-24 bg-amber-400 rounded-full mx-auto" />
+          <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
           <h3 className="text-3xl font-semibold text-gray-900 mt-6 mb-4">
             Join Our Newsletter
           </h3>
