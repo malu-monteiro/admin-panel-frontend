@@ -4,11 +4,13 @@ import Pets from "@/assets/hero/pets.png";
 
 import { Title } from "@/components/Title";
 import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { ServicesSection } from "@/components/home/Hero/ServicesSection";
 import { SchedulingButton } from "@/components/home/Hero/SchedulingButton";
 import { About } from "./About";
 import { Services } from "./Services";
+import { Reviews } from "./Reviews";
+import Newsletter from "./Newsletter";
+import { Footer } from "@/components/home/Footer";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -32,6 +34,7 @@ export function Hero() {
   return (
     <>
       <Title>Home</Title>
+
       <div className="relative">
         <section className="relative bg-noise to-amber-0 pt-24 pb-32 px-6 md:px-24 flex flex-col md:flex-row items-center justify-center overflow-hidden z-0">
           <div className="absolute top-0 left-0 w-full px-6 md:px-24">
@@ -73,9 +76,15 @@ export function Hero() {
           <Services />
         </div>
 
-        <div className="mb-5 px-6 md:px-24">
-          <Footer />
+        <div className="mt-28 md:mt-44">
+          <Reviews />
         </div>
+
+        <div className="mt-28 md:mt-44">
+          <Newsletter />
+        </div>
+
+        <Footer />
       </div>
     </>
   );

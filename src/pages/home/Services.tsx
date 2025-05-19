@@ -6,7 +6,7 @@ import { FadeInUp } from "./Hero";
 
 export function Services() {
   return (
-    <div className="bg-gray-100 relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
+    <div className="bg-gray-50 relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
       <FadeInUp className="mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-2xl font-medium text-gray-800 mb-4">

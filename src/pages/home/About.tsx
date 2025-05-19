@@ -16,7 +16,6 @@ export function About() {
 
           <div className="h-1 w-24 bg-amber-400 rounded-full mb-6" />
 
-          {/* Texto */}
           <div className="space-y-4 text-gray-600">
             <p className="text-sm md:text-base leading-relaxed">
               At Pawfaction, we believe that every pet deserves exceptional
@@ -26,17 +25,13 @@ export function About() {
             </p>
 
             <p className="text-sm md:text-base leading-relaxed">
-              Our services are designed with your pet’s well-being in mind. From
-              expert veterinary care and playful daycare to gentle grooming and
-              positive training, we provide everything your pet needs to stay
-              healthy, happy, and well-behaved.
-            </p>
-
-            <p className="text-sm md:text-base leading-relaxed">
-              With a dedicated team of professionals and a passion for animals,
+              Our services are designed with your pet’s well-being in mind. With
+              a dedicated team of professionals and a passion for animals,
               Pawfaction is more than a service, it’s a second home for your
               pet.
             </p>
+
+            <p className="text-sm md:text-base leading-relaxed"></p>
           </div>
         </div>
       </FadeInUp>
