@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { User } from "@/types";
-import { fetchUserData } from "@/lib/api/fetchUserData";
 import { AuthContext } from "./AuthContext";
+import { fetchUserData } from "@/lib/api/fetchUserData";
 
 import { jwtDecode } from "jwt-decode";
 
@@ -14,19 +14,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isTokenValid = (token: string) => {
     try {
-      const decoded = jwtDecode(token) as { exp: number };
-      return decoded.exp * 1000 > Date.now();
+      const { exp } = jwtDecode<{ exp: number }>(token);
+      return exp * 1000 > Date.now();
     } catch {
       return false;
     }
   };
 
-  const loadUserData = async (token: string) => {
+  const loadUserData = async () => {
     try {
-      const userData = await fetchUserData(token);
+      const userData = await fetchUserData();
       setUser(userData);
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
+    } catch {
       logout();
     } finally {
       setIsLoading(false);
@@ -42,56 +41,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (!isTokenValid(token)) {
-        console.warn("Expired token detected on loading");
         logout();
         return;
       }
 
-      await loadUserData(token);
+      await loadUserData();
     };
 
     verifyAuth();
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token || !user) return;
-
-    const interval = setInterval(async () => {
-      if (!isTokenValid(token)) {
-        logout();
-      } else {
-        await loadUserData(token);
-      }
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [user]);
-
   const login = async (token: string) => {
     localStorage.setItem("authToken", token);
-    await loadUserData(token);
+    await loadUserData();
   };
 
   const logout = () => {
     localStorage.removeItem("authToken");
-    localStorage.removeItem("requiresEmailUpdate");
     sessionStorage.clear();
-
     setUser(null);
-    queryClient.removeQueries();
     queryClient.clear();
-
     window.location.href = "/sign-in";
   };
 
   const updateUser = async (newData: Partial<User>) => {
-    if (user) {
-      setUser((prev) => (prev ? { ...prev, ...newData } : null));
+    setUser((prev) => (prev ? { ...prev, ...newData } : null));
 
-      const token = localStorage.getItem("authToken");
-      if (token) await loadUserData(token);
-    }
+    await loadUserData();
   };
 
   return (

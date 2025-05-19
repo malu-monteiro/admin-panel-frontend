@@ -6,7 +6,7 @@ export function isAuthenticated(): boolean {
 
   try {
     const decoded = jwtDecode(token) as { exp: number };
-    return decoded.exp * 1000 > Date.now();
+    return decoded.exp * 6000 > Date.now();
   } catch {
     return false;
   }

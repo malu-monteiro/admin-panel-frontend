@@ -1,5 +1,3 @@
-import axios from "axios";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -18,13 +16,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import API from "@/lib/api/client";
+import API, { isAxiosError } from "@/lib/api/client";
 
 const accountSchema = z
   .object({
     name: z.string().min(1, "Required").optional(),
     email: z.string().email().optional(),
-    currentPassword: z.string().optional(),
+    currentPassword: z.string().optional().or(z.literal("")),
     newPassword: z
       .string()
       .optional()
@@ -67,6 +65,7 @@ export function AccountModal({
 }: AccountModalProps) {
   const [isUpdatingBasicInfo, setIsUpdatingBasicInfo] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -85,27 +84,34 @@ export function AccountModal({
   const handleBasicInfoUpdate = async (data: AccountFormData) => {
     setIsUpdatingBasicInfo(true);
 
+    const payload: Record<string, string> = {};
+    if (data.name && data.name !== user.name) payload.name = data.name;
+    if (data.email && data.email !== user.email) payload.email = data.email;
+
+    if (Object.keys(payload).length === 0) {
+      toast("No changes to update");
+      setIsUpdatingBasicInfo(false);
+      return;
+    }
+
     try {
-      const response = await API.patch("/auth/update", {
-        name: data.name,
-        email: data.email,
+      const response = await API.patch("/auth/update", payload);
+
+      onUpdate({
+        name: response.data.name || user.name,
+        email: response.data.email || user.email,
       });
 
       if (response.data.requiresVerification) {
         toast.info("Verification email sent to new address");
         onOpenChange(false);
+      } else {
+        toast.success("Profile updated successfully");
+        onOpenChange(false);
       }
-
-      onUpdate({
-        name: data.name ?? user.name,
-        email: response.data.requiresVerification
-          ? user.email
-          : data.email ?? user.email,
-      });
-      toast.success("Data updated!");
     } catch (error) {
       let message = "Error updating data";
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         message = error.response?.data?.error || message;
       }
       toast.error(message);
@@ -116,6 +122,7 @@ export function AccountModal({
 
   const handlePasswordUpdate = async (data: AccountFormData) => {
     setIsUpdatingPassword(true);
+
     try {
       await API.patch("/auth/update-password", {
         currentPassword: data.currentPassword,
@@ -126,7 +133,7 @@ export function AccountModal({
       reset({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error) {
       let message = "Error changing password";
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         message = error.response?.data?.error || message;
       }
       toast.error(message);
@@ -146,17 +153,29 @@ export function AccountModal({
           onSubmit={handleSubmit(handleBasicInfoUpdate)}
           className="space-y-4"
         >
-          <Input
-            {...register("name")}
-            placeholder="Name"
-            error={errors.name?.message}
-          />
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="Email"
-            error={errors.email?.message}
-          />
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">
+              You can change your name anytime
+            </p>
+            <Input
+              {...register("name")}
+              placeholder="Name"
+              error={errors.name?.message}
+            />
+          </div>
+
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">
+              Changing email requires verification
+            </p>
+            <Input
+              {...register("email")}
+              type="email"
+              placeholder="Email"
+              error={errors.email?.message}
+            />
+          </div>
+
           <Button className="mt-4" type="submit" disabled={isUpdatingBasicInfo}>
             {isUpdatingBasicInfo ? "Saving..." : "Save Changes"}
           </Button>

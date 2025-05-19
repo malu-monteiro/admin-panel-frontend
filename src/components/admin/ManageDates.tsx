@@ -1,13 +1,13 @@
+import { useForm } from "react-hook-form";
 import { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Select,
   SelectContent,
@@ -15,222 +15,309 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isDateDisabled } from "@/utils/is-date-disbled";
-import { WorkingHours, Block } from "@/types";
 
-import API from "@/lib/api/client";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+
+import { toast } from "sonner";
+
+import { Block, WorkingHours } from "@/types";
+import { isDateDisabled } from "@/utils/is-date-disbled";
+
+import API, { isAxiosError } from "@/lib/api/client";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export function ManageDates() {
-  const TIMEZONE = "America/Sao_Paulo";
+const TIMEZONE = "America/Sao_Paulo";
 
+const blockSchema = z
+  .object({
+    date: z.string().min(1, "Please select a date"),
+    startTime: z.string().min(1, "Start time is required"),
+    endTime: z.string().min(1, "End time is required"),
+  })
+  .refine(
+    (data) => {
+      const start = dayjs.tz(`${data.date}T${data.startTime}`, TIMEZONE);
+      const end = dayjs.tz(`${data.date}T${data.endTime}`, TIMEZONE);
+      return end.isAfter(start);
+    },
+    {
+      message: "End time must be after start time",
+      path: ["endTime"],
+    }
+  );
+
+type BlockFormValues = z.infer<typeof blockSchema>;
+
+export function ManageDates() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [workingHours, setWorkingHours] = useState<WorkingHours | null>(null);
-  const [date, setDate] = useState<string | null>(null);
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
   const [blocks, setBlocks] = useState<Block[]>([]);
 
+  const { handleSubmit, setValue, reset, watch, formState } =
+    useForm<BlockFormValues>({
+      resolver: zodResolver(blockSchema),
+      defaultValues: {
+        date: "",
+        startTime: "",
+        endTime: "",
+      },
+    });
+
+  const selectedDate = watch("date");
+
+  const fetchBlocks = async () => {
+    try {
+      const startDate = dayjs()
+        .tz(TIMEZONE)
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      const endDate = dayjs().tz(TIMEZONE).endOf("month").format("YYYY-MM-DD");
+
+      const response = await API.get<Block[]>("/availability/blocks", {
+        params: {
+          startDate,
+          endDate,
+        },
+      });
+
+      setBlocks(response.data);
+    } catch (error) {
+      console.error("Error fetching blocks:", error);
+      let message = "Failed to load blocks";
+      if (isAxiosError(error)) {
+        message = error.response?.data?.error || message;
+      }
+      toast.error(message);
+    }
+  };
+
   useEffect(() => {
-    const loadWorkingHours = async () => {
+    const loadData = async () => {
       try {
-        const response = await API.get<WorkingHours>("/api/working-hours");
-        setWorkingHours({ ...response.data, isDefault: false });
+        const whResponse = await API.get<WorkingHours>(
+          "/availability/working-hours"
+        );
+        setWorkingHours(whResponse.data);
+
+        await fetchBlocks();
       } catch (error) {
-        console.error("Erro ao carregar horários:", error);
-        setWorkingHours({
-          startTime: "08:00",
-          endTime: "18:00",
-          isDefault: true,
-        });
+        let message = "Failed to load data";
+        if (isAxiosError(error)) {
+          message = error.response?.data?.error || message;
+        }
+        toast.error(message);
       }
     };
-    loadWorkingHours();
+    loadData();
   }, []);
 
   const hours = useMemo(() => {
     if (!workingHours) return [];
-    const [startHour] = workingHours.startTime.split(":").map(Number);
-    const [endHour] = workingHours.endTime.split(":").map(Number);
-
-    const timeSlots = [];
-    for (let hour = startHour; hour <= endHour; hour++) {
-      timeSlots.push(`${hour.toString().padStart(2, "0")}:00`);
-    }
-    return timeSlots;
+    const [start] = workingHours.startTime.split(":").map(Number);
+    const [end] = workingHours.endTime.split(":").map(Number);
+    return Array.from(
+      { length: end - start + 1 },
+      (_, i) => `${String(start + i).padStart(2, "0")}:00`
+    );
   }, [workingHours]);
 
-  const fetchBlocks = async () => {
+  const handleBlock = async (data: BlockFormValues) => {
+    setIsSubmitting(true);
     try {
-      const response = await axios.get<Block[]>("/api/blocks", {
-        params: {
-          startDate: dayjs().startOf("month").format("YYYY-MM-DD"),
-          endDate: dayjs().endOf("month").format("YYYY-MM-DD"),
-        },
-      });
-
-      const now = dayjs().tz(TIMEZONE);
-      const isFutureBlock = (block: Block) => {
-        if (block.isBlocked) {
-          const blockDate = dayjs(block.date).tz(TIMEZONE).startOf("day");
-          return blockDate.isSameOrAfter(now.startOf("day"));
-        }
-        return (
-          block.blockedSlots?.some((slot) =>
-            dayjs(slot.endTime).tz(TIMEZONE).isAfter(now)
-          ) ?? false
-        );
-      };
-      const filteredBlocks = response.data.filter(isFutureBlock);
-      setBlocks(filteredBlocks);
-    } catch (error) {
-      console.error("Erro ao buscar bloqueios:", error);
-      setBlocks([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchBlocks();
-  }, []);
-
-  const handleBlockSlot = async () => {
-    if (!date || !startTime || !endTime) {
-      alert("Preencha todos os campos.");
-      return;
-    }
-
-    if (
-      !/^([01]\d|2[0-3]):([0-5]\d)$/.test(startTime) ||
-      !/^([01]\d|2[0-3]):([0-5]\d)$/.test(endTime)
-    ) {
-      alert("Formato de horário inválido. Use HH:mm (ex: 08:00)");
-      return;
-    }
-
-    try {
-      await axios.post("/api/blocks", {
-        date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
-        startTime,
-        endTime,
-      });
-      alert("Horário bloqueado com sucesso!");
-      fetchBlocks();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.error || "Erro ao bloquear horário");
-      } else {
-        alert("Erro ao bloquear horário");
+      const dateObj = dayjs.tz(data.date, TIMEZONE).startOf("day");
+      if (dateObj.isBefore(dayjs().tz(TIMEZONE), "day")) {
+        toast.error("Cannot block past dates");
+        return;
       }
+
+      const blockResponse = await API.post("/availability/blocks", {
+        date: dateObj.format("YYYY-MM-DD"),
+        startTime: data.startTime,
+        endTime: data.endTime,
+      });
+
+      if (blockResponse.status === 201) {
+        toast.success("Time slot blocked!");
+        setTimeout(() => {
+          fetchBlocks();
+          reset();
+        }, 300);
+      }
+    } catch (error) {
+      let message = "An unexpected error occurred";
+      if (isAxiosError(error)) {
+        message = error.response?.data?.error || message;
+      }
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleBlockDay = async () => {
-    if (!date) {
-      alert("Selecione uma data.");
+    if (!selectedDate) {
+      toast.error("Please select a date");
       return;
     }
+
+    const dateObj = dayjs.tz(selectedDate, TIMEZONE).startOf("day");
+    if (dateObj.isBefore(dayjs().tz(TIMEZONE), "day")) {
+      toast.error("Cannot block past dates");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const res = await axios.get("/api/blocks", {
+      const dateStr = dateObj.format("YYYY-MM-DD");
+      const res = await API.get<Block[]>("/availability/blocks", {
         params: {
-          startDate: dayjs(date).format("YYYY-MM-DD"),
-          endDate: dayjs(date).format("YYYY-MM-DD"),
+          startDate: dateStr,
+          endDate: dateStr,
         },
       });
 
       const existingBlock = res.data[0];
       if (existingBlock?.isBlocked) {
-        alert("Dia já está bloqueado.");
+        toast.error("This day is already blocked.");
+        setIsSubmitting(false);
         return;
       }
-      if (existingBlock) {
-        for (const slot of existingBlock.blockedSlots || []) {
-          await axios.delete("/api/blocks/${slot.id}");
-        }
+
+      if (existingBlock?.blockedSlots?.length) {
+        await Promise.all(
+          existingBlock.blockedSlots.map((slot) =>
+            API.delete(`/availability/blocks/slot/${slot.id}`)
+          )
+        );
       }
 
-      await axios.post("/api/blocks", {
-        date: dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD"),
+      const blockResponse = await API.post("/availability/blocks", {
+        date: dateStr,
       });
-      alert("Dia bloqueado com sucesso!");
-      fetchBlocks();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.error || "Erro ao bloquear dia");
+
+      if (blockResponse.status === 201) {
+        toast.success("Day blocked successfully");
+        setTimeout(() => {
+          fetchBlocks();
+          reset();
+        }, 300);
       }
+    } catch (error) {
+      let message = "Failed to block day";
+      if (isAxiosError(error)) {
+        message = error.response?.data?.error || message;
+      }
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Card className="p-4 mb-6 grid gap-4 w-full max-w-md">
-      <div>
-        <Calendar
-          mode="single"
-          selected={
-            date ? dayjs(date).tz("America/Sao_Paulo").toDate() : undefined
-          }
-          onSelect={(selectedDate) => {
-            if (!selectedDate) return;
-            setDate(
-              dayjs(selectedDate).tz("America/Sao_Paulo").format("YYYY-MM-DD")
-            );
-          }}
-          disabled={(dateItem) =>
-            isDateDisabled(dateItem, {
-              blocks,
-              allowAfterHours: false,
-              timezone: "America/Sao_Paulo",
-            })
-          }
-          className="rounded-md border"
-        />
-      </div>
+    <div>
+      <Card className="p-4 mb-6 max-w-md">
+        <form onSubmit={handleSubmit(handleBlock)} className="space-y-4">
+          <div className="flex gap-2 mb-4">
+            <Calendar
+              mode="single"
+              selected={
+                selectedDate
+                  ? dayjs.tz(selectedDate, TIMEZONE).toDate()
+                  : undefined
+              }
+              onSelect={(date) => {
+                setValue(
+                  "date",
+                  date ? dayjs(date).tz(TIMEZONE).format("YYYY-MM-DD") : ""
+                );
+              }}
+              disabled={(date) =>
+                isDateDisabled(date, {
+                  blocks,
+                  allowAfterHours: false,
+                  timezone: TIMEZONE,
+                })
+              }
+              className="flex-1"
+            />
+            {formState.errors.date && (
+              <p className="text-red-500 text-sm mt-2">
+                {formState.errors.date.message}
+              </p>
+            )}
+          </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label className="block mb-1">Start</Label>
-          <Select onValueChange={setStartTime} value={startTime}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Time" />
-            </SelectTrigger>
-            <SelectContent>
-              {hours.map((hour) => (
-                <SelectItem key={hour} value={hour}>
-                  {hour}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="block mb-1">End</Label>
-          <Select onValueChange={setEndTime} value={endTime}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Time" />
-            </SelectTrigger>
-            <SelectContent>
-              {hours.map((hour) => (
-                <SelectItem key={hour} value={hour}>
-                  {hour}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Start Time</Label>
+              <Select
+                value={watch("startTime")}
+                onValueChange={(value) => setValue("startTime", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select start time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {hours.map((hour) => (
+                    <SelectItem key={hour} value={hour}>
+                      {hour}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formState.errors.startTime && (
+                <p className="text-red-500 text-sm">
+                  {formState.errors.startTime.message}
+                </p>
+              )}
+            </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Button onClick={handleBlockSlot} className="w-[160px]">
-          Block Time Slot
-        </Button>
-        <Button
-          variant="destructive"
-          onClick={handleBlockDay}
-          className="w-[160px]"
-        >
-          Block Entire Day
-        </Button>
-      </div>
-    </Card>
+            <div>
+              <Label>End Time</Label>
+              <Select
+                value={watch("endTime")}
+                onValueChange={(value) => setValue("endTime", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select end time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {hours.map((hour) => (
+                    <SelectItem key={hour} value={hour}>
+                      {hour}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formState.errors.endTime && (
+                <p className="text-red-500 text-sm">
+                  {formState.errors.endTime.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Blocking..." : "Block Time"}
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleBlockDay}
+              disabled={!selectedDate || isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? "Processing..." : "Block Entire Day"}
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </div>
   );
 }

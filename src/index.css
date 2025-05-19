@@ -154,7 +154,6 @@ button:focus-visible {
       background-size: 2px 2px, cover;
       background-blend-mode: overlay;
       opacity: 1;
-      pointer-events: none;
       z-index: 0;
     }
   }

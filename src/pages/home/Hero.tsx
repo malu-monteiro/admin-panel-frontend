@@ -1,11 +1,32 @@
-import Pets from "@/assets/hero/pets.png";
 import { motion } from "framer-motion";
-import { SchedulingButton } from "@/components/home/SchedulingButton";
-import { Navbar } from "@/components/home/Navbar";
-import { ServicesSection } from "@/components/home/ServicesSection";
-import { Footer } from "@/components/home/Footer";
+
+import Pets from "@/assets/hero/pets.png";
 
 import { Title } from "@/components/Title";
+import { Navbar } from "@/components/home/Navbar";
+import { Footer } from "@/components/home/Footer";
+import { ServicesSection } from "@/components/home/Hero/ServicesSection";
+import { SchedulingButton } from "@/components/home/Hero/SchedulingButton";
+import { About } from "./About";
+import { Services } from "./Services";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: "easeIn" },
+};
+
+export const FadeInUp = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <motion.div {...fadeInUp} className={className}>
+    {children}
+  </motion.div>
+);
 
 export function Hero() {
   return (
@@ -17,12 +38,7 @@ export function Hero() {
             <Navbar />
           </div>
 
-          <motion.div
-            className="relative z-20 max-w-xl text-center md:text-left md:mr-32 mt-16 md:translate-y-[-40px]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeIn" }}
-          >
+          <FadeInUp className="relative z-20 max-w-xl text-center md:text-left md:mr-32 mt-16 md:translate-y-[-40px]">
             <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 md:mb-6">
               We give your pet <br className="hidden md:block" /> the care they
               deserve
@@ -34,30 +50,28 @@ export function Hero() {
               well-being is our passion!
             </p>
             <SchedulingButton />
-          </motion.div>
+          </FadeInUp>
 
-          <motion.div
-            className="relative mt-8 md:mt-0 md:translate-y-[-40px]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeIn" }}
-          >
+          <FadeInUp className="relative mt-8 md:mt-0 md:translate-y-[-40px]">
             <img
               src={Pets}
               alt="Dog and cat"
               className="w-[280px] md:w-[500px] z-10 relative"
             />
-          </motion.div>
+          </FadeInUp>
         </section>
 
-        <motion.div
-          className="relative z-30 -mt-20 lg:-mt-36 px-6 md:px-24"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeIn" }}
-        >
+        <FadeInUp className="relative z-30 -mt-20 lg:-mt-36 px-6 md:px-24">
           <ServicesSection />
-        </motion.div>
+        </FadeInUp>
+
+        <div className="mt-28 md:mt-44">
+          <About />
+        </div>
+
+        <div className="mt-28 md:mt-44">
+          <Services />
+        </div>
 
         <div className="mb-5 px-6 md:px-24">
           <Footer />

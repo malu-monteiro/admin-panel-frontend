@@ -1,51 +1,69 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+
+import { toast } from "sonner";
+
 import { Block } from "@/types";
+
+import API, { isAxiosError } from "@/lib/api/client";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export function ActiveBlocks() {
-  const API_URL = "http://localhost:3000";
-  const TIMEZONE = "America/Sao_Paulo";
+const TIMEZONE = "America/Sao_Paulo";
 
+export function ActiveBlocks() {
   const [blocks, setBlocks] = useState<Block[]>([]);
+
+  const toLocalDate = (date: string | Date) => {
+    return dayjs(date).tz(TIMEZONE);
+  };
 
   const fetchBlocks = async () => {
     try {
-      const response = await axios.get<Block[]>(`${API_URL}/api/blocks`, {
+      const startDate = dayjs()
+        .tz(TIMEZONE)
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      const endDate = dayjs().tz(TIMEZONE).endOf("month").format("YYYY-MM-DD");
+
+      const response = await API.get<Block[]>("/availability/blocks", {
         params: {
-          startDate: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
-          endDate: dayjs().add(1, "month").format("YYYY-MM-DD"),
+          startDate,
+          endDate,
         },
       });
+
       const isFutureBlock = (block: Block) => {
         const now = dayjs().tz(TIMEZONE);
 
         if (block.isBlocked) {
-          const blockDate = dayjs(block.date).tz(TIMEZONE).startOf("day");
+          const blockDate = toLocalDate(block.date).startOf("day");
           return blockDate.isSameOrAfter(now.startOf("day"));
         }
 
-        if (block.blockedSlots?.length) {
-          return block.blockedSlots.some((slot) =>
-            dayjs(slot.endTime).tz(TIMEZONE).isAfter(now)
-          );
-        }
-
-        return false;
+        return (
+          block.blockedSlots?.some((slot) => {
+            const localDate = toLocalDate(block.date).format("YYYY-MM-DD");
+            const slotEnd = dayjs.tz(`${localDate}T${slot.endTime}`, TIMEZONE);
+            return slotEnd.isAfter(now);
+          }) ?? false
+        );
       };
 
       const filteredBlocks = response.data.filter(isFutureBlock);
       setBlocks(filteredBlocks);
     } catch (error) {
-      console.error("Erro ao buscar bloqueios:", error);
+      const message = isAxiosError(error)
+        ? error.response?.data?.error
+        : "Failed to load blocks";
+      toast.error(message);
       setBlocks([]);
     }
   };
@@ -54,25 +72,24 @@ export function ActiveBlocks() {
     fetchBlocks();
   }, []);
 
-  const handleUnblock = async (id: number) => {
+  const handleUnblock = async (type: "day" | "slot", id: number) => {
     try {
-      await axios.delete(`${API_URL}/api/blocks/${id}`);
+      await API.delete(`/availability/blocks/${type}/${id}`);
       await fetchBlocks();
-      alert("Desbloqueado com sucesso!");
-      setBlocks((prevBlocks) =>
-        prevBlocks.filter(
-          (block) =>
-            block.id !== id &&
-            !block.blockedSlots?.some((slot) => slot.id === id)
-        )
-      );
+      toast.success("Successfully unblocked");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.error || "Erro ao desbloquear");
-      } else {
-        alert("Erro ao desbloquear");
-      }
+      const message = isAxiosError(error)
+        ? error.response?.data?.error
+        : "An error occurred while trying to unblock";
+      toast.error(message);
     }
+  };
+
+  const formatDateTime = (date: string | Date, time?: string) => {
+    if (!time) return toLocalDate(date).format("DD/MM/YYYY");
+
+    const localDate = toLocalDate(date).format("YYYY-MM-DD");
+    return dayjs.tz(`${localDate}T${time}`, TIMEZONE).format("HH:mm");
   };
 
   return (
@@ -88,59 +105,50 @@ export function ActiveBlocks() {
             </tr>
           </thead>
           <tbody>
-            {blocks
-              .filter((block) => block.isBlocked || block.blockedSlots?.length)
-              .flatMap((block) => {
-                if (block.isBlocked) {
-                  return (
-                    <tr key={`day-${block.id}`} className="border-b">
-                      <td className="py-2 px-4">
-                        {dayjs
-                          .utc(block.date)
-                          .tz(TIMEZONE)
-                          .format("DD/MM/YYYY")}
-                      </td>
-                      <td className="py-2 px-4">All Day</td>
-                      <td className="py-2 px-4">-</td>
-                      <td className="py-2 px-4">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleUnblock(block.id)}
-                        >
-                          Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                }
-                return (
-                  block.blockedSlots?.map((slot) => (
-                    <tr key={`slot-${slot.id}`} className="border-b">
-                      <td className="py-2 px-4">
-                        {dayjs
-                          .utc(slot.startTime)
-                          .tz(TIMEZONE)
-                          .format("DD/MM/YYYY")}
-                      </td>
-                      <td className="py-2 px-4">Horário</td>
-                      <td className="py-2 px-4">
-                        {dayjs.utc(slot.startTime).tz(TIMEZONE).format("HH:mm")}
-                        - {dayjs.utc(slot.endTime).tz(TIMEZONE).format("HH:mm")}
-                      </td>
-                      <td className="py-2 px-4">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleUnblock(slot.id)}
-                        >
-                          Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  )) || []
-                );
-              })}
+            {blocks.map((block) =>
+              block.isBlocked ? (
+                <tr key={`day-${block.id}`} className="border-b">
+                  <td className="py-2 px-4">
+                    {toLocalDate(block.date).format("DD/MM/YYYY")}
+                  </td>
+                  <td className="py-2 px-4">All Day</td>
+                  <td className="py-2 px-4">-</td>
+                  <td className="py-2 px-4">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleUnblock("day", block.id)}
+                    >
+                      Remove
+                    </Button>
+                  </td>
+                </tr>
+              ) : (
+                block.blockedSlots?.map((slot) => (
+                  <tr key={`slot-${slot.id}`} className="border-b">
+                    <td className="py-2 px-4">
+                      {toLocalDate(block.date).format("DD/MM/YYYY")}
+                    </td>
+                    <td className="py-2 px-4">Time Slot</td>
+                    <td className="py-2 px-4">
+                      {`${formatDateTime(
+                        block.date,
+                        slot.startTime
+                      )} - ${formatDateTime(block.date, slot.endTime)}`}
+                    </td>
+                    <td className="py-2 px-4">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleUnblock("slot", slot.id)}
+                      >
+                        Remove
+                      </Button>
+                    </td>
+                  </tr>
+                )) || []
+              )
+            )}
           </tbody>
         </table>
       </div>

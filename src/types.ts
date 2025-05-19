@@ -8,6 +8,14 @@ export type WorkingHours = {
   isDefault?: boolean;
 };
 
+export type Service = {
+  id: number;
+  name: string;
+};
+
+export type ServicesResponse = ApiResponse<Service[]>;
+export type SingleServiceResponse = ApiResponse<Service>;
+
 export type BlockedSlot = {
   id: number;
   startTime: string;
@@ -51,7 +59,6 @@ export type AppointmentData = {
 export type User = {
   name: string;
   email: string;
-  avatar: string;
 };
 
 export type FormData = {
@@ -113,8 +120,8 @@ export type ErrorResponse = {
   message?: string;
 };
 
-export interface ApiResponse<T = any> {
-  data?: T;
+export interface ApiResponse<T = unknown> {
+  data: T;
   error?: string;
   message?: string;
 }
@@ -126,7 +133,7 @@ export interface UpdateResponse extends ApiResponse {
 
 export interface PasswordUpdateResponse extends ApiResponse {}
 
-// Modifique as chamadas:
+// Modificar as chamadas:
 const response = await axios.patch<UpdateResponse>("/auth/update");
 
 // No password:

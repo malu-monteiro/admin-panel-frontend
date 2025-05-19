@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+
 import { Block } from "@/types";
 
 dayjs.extend(utc);
@@ -43,8 +44,15 @@ export function isDateDisabled(
 
     return (
       block.blockedSlots?.some((slot) => {
-        const start = dayjs(slot.startTime).tz(timezone);
-        const end = dayjs(slot.endTime).tz(timezone);
+        const start = blockDate
+          .clone()
+          .set("hour", parseInt(slot.startTime.split(":")[0]))
+          .set("minute", parseInt(slot.startTime.split(":")[1]));
+        const end = blockDate
+          .clone()
+          .set("hour", parseInt(slot.endTime.split(":")[0]))
+          .set("minute", parseInt(slot.endTime.split(":")[1]));
+
         return selected.isBetween(start, end, null, "[]");
       }) || false
     );

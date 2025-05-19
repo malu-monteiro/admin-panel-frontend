@@ -35,22 +35,25 @@ import { Availability, AppointmentData } from "@/types";
 
 import { isDateDisabled } from "@/utils/is-date-disbled";
 
+import API from "@/lib/api/client";
+
 dayjs.extend(utc);
 dayjs.extend(isBetween);
 
-const API_URL = "http://localhost:3000";
-
 const step1Schema = z.object({
-  service: z.string().min(1, "Por favor, selecione um serviço"),
+  service: z.string().min(1, "Please select a service"),
   date: z.date({
-    required_error: "Por favor, selecione uma data",
+    required_error: "Please select a date",
   }),
-  time: z.string().min(1, "Por favor, selecione um horário"),
+  time: z.string().min(1, "Please select a time"),
 });
 
 const step2Schema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  phone: z.string().min(14, "Telefone inválido").max(15, "Telefone inválido"),
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+  phone: z
+    .string()
+    .min(14, "Invalid phone number")
+    .max(15, "Invalid phone number"),
   message: z.string().optional(),
 });
 
@@ -81,13 +84,13 @@ export function SchedulingButton() {
   useEffect(() => {
     const fetchWorkingHours = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/working-hours`);
+        const response = await API.get("/availability/working-hours");
         setWorkingHours({
           ...response.data,
           isDefault: false,
         });
       } catch (error) {
-        console.error("Erro ao buscar horários:", error);
+        console.error("Error fetching times:", error);
         setWorkingHours({
           startTime: "08:00",
           endTime: "18:00",
@@ -102,10 +105,10 @@ export function SchedulingButton() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/services`);
+        const response = await API.get("/availability/services");
         setServices(response.data.map((s: { name: string }) => s.name));
       } catch (error) {
-        console.error("Erro ao buscar serviços:", error);
+        console.error("Error fetching services:", error);
 
         setServices([
           "Healthcare",
@@ -123,15 +126,12 @@ export function SchedulingButton() {
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
-        const response = await axios.get<Availability[]>(
-          `${API_URL}/api/blocks`,
-          {
-            params: {
-              startDate: dayjs().utc().format("YYYY-MM-DD"),
-              endDate: dayjs().utc().add(3, "month").format("YYYY-MM-DD"),
-            },
-          }
-        );
+        const response = await API.get<Availability[]>("/availability/blocks", {
+          params: {
+            startDate: dayjs().utc().format("YYYY-MM-DD"),
+            endDate: dayjs().utc().add(3, "month").format("YYYY-MM-DD"),
+          },
+        });
 
         const fullyBlockedDates = response.data
           .filter((block) => block.isBlocked === true)
@@ -154,7 +154,7 @@ export function SchedulingButton() {
         setBlockedDates(fullyBlockedDates);
         setTimeBlocks(timeBlocksData);
       } catch (error) {
-        console.error("Erro ao buscar bloqueios:", error);
+        console.error("Error fetching blocks:", error);
       }
     };
 
@@ -232,7 +232,7 @@ export function SchedulingButton() {
         message: data.message,
       };
 
-      await axios.post(`${API_URL}/api/appointments`, appointmentData);
+      await axios.post("/availability/appointments", appointmentData);
 
       toast.success("Appointment successfully scheduled!");
 

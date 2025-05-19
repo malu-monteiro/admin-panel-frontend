@@ -1,17 +1,18 @@
 import { useState } from "react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Slideshow from "@/components/auth/Slideshow";
-
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/hooks/useAuthContext";
 
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import Slideshow from "@/components/auth/Slideshow";
+import { Card, CardContent } from "@/components/ui/card";
+
 type LoginFormProps = React.ComponentProps<"div">;
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const { login } = useAuthContext();
@@ -19,6 +20,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [forgotPasswordError, setForgotPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const handleApiError = (error: unknown): string => {
     if (error instanceof Error) {
@@ -34,10 +36,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${API_URL}/auth/sign-in`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -53,7 +56,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       login(data.token, {
         name: data.name || "Admin",
         email: data.email,
-        avatar: "",
       });
 
       setTimeout(() => {
@@ -63,6 +65,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
     onError: (error: Error) => {
       const errorMessage = handleApiError(error);
+      setLoginError(errorMessage);
+
       if (errorMessage.includes("Email not verified")) {
         navigate("/verify-email");
       }
@@ -72,6 +76,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError("");
     const formData = new FormData(e.currentTarget as HTMLFormElement);
 
     loginMutation.mutate({
@@ -82,14 +87,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const forgotPasswordMutation = useMutation({
     mutationFn: async (email: string) => {
-      const response = await fetch(
-        "http://localhost:3000/auth/forgot-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -153,6 +155,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     type="password"
                     required
                   />
+                  {loginError && (
+                    <div className="text-red-500 text-center mt-2">
+                      {loginError}
+                    </div>
+                  )}
                 </div>
 
                 <Button
@@ -174,8 +181,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                   </p>
                 </div>
                 {emailSent ? (
-                  <div className="text-center text-green-500">
-                    We send a link to your email
+                  <div className="px-4 py-3 text-center text-green-500 bg-green-100 rounded-md">
+                    We've sent a link to your email.
                   </div>
                 ) : (
                   <>

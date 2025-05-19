@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 import Slideshow from "./Slideshow";
 
@@ -18,6 +18,16 @@ export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+
+  const validatePassword = (password: string) => {
+    if (password.length < 6) {
+      return "The password must be at least 6 characters long";
+    }
+    if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
+      return "Must contain letters and numbers";
+    }
+    return null;
+  };
 
   useEffect(() => {
     if (!token) {
@@ -69,13 +79,9 @@ export function ResetPasswordForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
-      setError("Password must contain at least one letter and one number");
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
@@ -83,12 +89,17 @@ export function ResetPasswordForm() {
       setError("Passwords do not match");
       return;
     }
+
     resetPasswordMutation.mutate(password);
   };
 
   useEffect(() => {
-    if (password && confirmPassword && password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (password && confirmPassword) {
+      const passwordError = validatePassword(password);
+      const confirmError =
+        password !== confirmPassword ? "Passwords do not match" : "";
+
+      setError(passwordError || confirmError);
     } else {
       setError("");
     }
@@ -135,23 +146,27 @@ export function ResetPasswordForm() {
                 />
               </div>
 
-              {error && (
-                <div className="text-red-500 text-sm flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {error}
-                </div>
-              )}
+              <div
+                className="text-red-500 text-sm flex items-center gap-2"
+                style={{
+                  visibility: error ? "visible" : "hidden",
+                  minHeight: "1.25rem",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {error || <span className="invisible">Placeholder</span>}
+              </div>
             </div>
 
             <Button

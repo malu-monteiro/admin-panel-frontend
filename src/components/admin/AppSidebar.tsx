@@ -30,8 +30,8 @@ export function AppSidebar({
   const { user: authUser } = useAuthContext();
 
   const defaultUser = {
-    name: "Usuário",
-    email: "usuario@exemplo.com",
+    name: "User",
+    email: "user@example.com",
     avatar: "/avatars/default.jpg",
   };
 
