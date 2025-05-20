@@ -303,12 +303,16 @@ export function SchedulingButton() {
                 }}
                 value={step1Form.watch("service")}
               >
-                <SelectTrigger>
+                <SelectTrigger className="!bg-neutral-100">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map((service) => (
-                    <SelectItem key={service} value={service}>
+                    <SelectItem
+                      className="hover:!bg-neutral-200"
+                      key={service}
+                      value={service}
+                    >
                       {service}
                     </SelectItem>
                   ))}
@@ -367,12 +371,16 @@ export function SchedulingButton() {
                   }}
                   value={step1Form.watch("time")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="!bg-neutral-100">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
                     {availableTimes.map((time) => (
-                      <SelectItem key={time} value={time}>
+                      <SelectItem
+                        key={time}
+                        value={time}
+                        className="hover:!bg-neutral-200"
+                      >
                         {time}
                       </SelectItem>
                     ))}
