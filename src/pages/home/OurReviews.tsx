@@ -60,7 +60,7 @@ const ReviewCard = ({
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <img className="rounded-full" width={32} height={32} alt="" src={img} />
+        <img className="rounded-full" width="32" height="32" alt="" src={img} />
         <div className="flex flex-col">
           <figcaption className="text-sm font-medium text-gray-900">
             {name}
@@ -73,24 +73,21 @@ const ReviewCard = ({
   );
 };
 
-export function Reviews() {
+export function OurReviews() {
   const firstRow = reviews.slice(0, reviews.length / 2);
   const secondRow = reviews.slice(reviews.length / 2);
 
   return (
     <section className="w-full py-20 px-6 md:px-24 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-2xl font-medium text-gray-800 mb-4">
-            Our Reviews
-          </h2>
+      <div className="max-w-6xl mx-auto text-center mb-16">
+        <h2 className="text-2xl font-medium text-gray-800 mb-4">Our Reviews</h2>
+        <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
+        <h3 className="text-3xl font-semibold text-gray-900 mt-6">
+          What They Say?
+        </h3>
+      </div>
 
-          <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
-          <h3 className="text-3xl font-semibold text-gray-900 mt-6">
-            What They Say?
-          </h3>
-        </div>
-
+      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden max-w-6xl mx-auto">
         <Marquee pauseOnHover className="[--duration:20s]">
           {firstRow.map((review) => (
             <ReviewCard key={review.username} {...review} />
@@ -101,8 +98,11 @@ export function Reviews() {
             <ReviewCard key={review.username} {...review} />
           ))}
         </Marquee>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+
+        {/* Gradients for fading edges effect */}
+
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background" />
       </div>
     </section>
   );

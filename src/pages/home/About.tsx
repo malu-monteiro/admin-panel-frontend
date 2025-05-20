@@ -7,12 +7,15 @@ export function About() {
         <div className="md:w-1/2">
           <img src={Cat} alt="Cat" className="h-auto w-full" />
         </div>
-        <div className="flex flex-col gap-6 md:w-1/2 text-center md:text-left">
-          <h3 className="text-3xl font-semibold text-gray-900 mt-6">
+
+        <div className="flex flex-col space-y-6 md:w-1/2 text-center md:text-left">
+          <h2 className="text-2xl font-medium text-gray-800">About us</h2>
+
+          <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto md:mx-0" />
+
+          <h3 className="text-3xl font-semibold text-gray-900">
             The Best Service
           </h3>
-
-          <div className="h-1 w-24 bg-amber-300 rounded-full mb-6" />
 
           <div className="space-y-4 text-gray-600">
             <p className="text-sm md:text-base leading-relaxed">
@@ -28,8 +31,6 @@ export function About() {
               Pawfaction is more than a service, it’s a second home for your
               pet.
             </p>
-
-            <p className="text-sm md:text-base leading-relaxed"></p>
           </div>
         </div>
       </div>

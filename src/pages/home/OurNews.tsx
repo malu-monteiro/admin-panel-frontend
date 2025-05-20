@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function Newsletter() {
+export function OurNews() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"

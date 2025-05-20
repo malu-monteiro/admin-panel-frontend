@@ -2,7 +2,7 @@ import Cat1 from "@/assets/hero/veterinary-dog.svg";
 import Cat2 from "@/assets/hero/pet-care.svg";
 import Cat3 from "@/assets/hero/dog-and-cat.svg";
 
-export function Services() {
+export function OurService() {
   return (
     <section className="w-full py-20 px-6 md:px-24 bg-gray-50">
       <div className="max-w-6xl mx-auto">

@@ -1,16 +1,15 @@
 import { motion } from "framer-motion";
 
-import { Title } from "@/components/Title";
-
-import { Footer } from "@/components/home/Footer";
-import { Navbar } from "@/components/home/Navbar";
-
 import { Hero } from "./Hero";
 import { About } from "./About";
 import { OurTeam } from "./OurTeam";
-import { Reviews } from "./Reviews";
-import { Newsletter } from "./Newsletter";
-import { Services } from "./Services";
+import { OurReviews } from "./OurReviews";
+import { OurService } from "./OurService";
+import { OurNews } from "./OurNews";
+
+import { Title } from "@/components/Title";
+import { Footer } from "@/components/home/Footer";
+import { Navbar } from "@/components/home/Navbar";
 import { ServicesSection } from "@/components/home/Hero/ServicesSection";
 
 const fadeInUp = {
@@ -49,10 +48,10 @@ export function Home() {
       </FadeInUp>
 
       <About />
-      <Services />
-      <Reviews />
+      <OurService />
+      <OurReviews />
       <OurTeam />
-      <Newsletter />
+      <OurNews />
 
       <Footer />
     </>
