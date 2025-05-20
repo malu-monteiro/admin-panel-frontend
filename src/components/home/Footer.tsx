@@ -20,8 +20,7 @@ export function Footer() {
             </span>
           </div>
           <p className="text-neutral-100 text-sm max-w-[200px]">
-            Every pawprint matters. We care for your pets with the same love you
-            do.
+            Every pawprint matters.
           </p>
         </div>
 

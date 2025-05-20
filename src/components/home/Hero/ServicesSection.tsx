@@ -36,7 +36,7 @@ const services: Service[] = [
 
 export function ServicesSection() {
   return (
-    <section className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col sm:flex-row flex-wrap lg:flex-nowrap items-start justify-center gap-6">
+    <section className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col sm:flex-row flex-wrap lg:flex-nowrap items-start justify-center gap-6 mt-10">
       {services.map((service, idx) => (
         <ServiceCard key={idx} {...service} />
       ))}
