@@ -2,12 +2,10 @@ import Cat1 from "@/assets/hero/veterinary-dog.svg";
 import Cat2 from "@/assets/hero/pet-care.svg";
 import Cat3 from "@/assets/hero/dog-and-cat.svg";
 
-import { FadeInUp } from "./Hero";
-
 export function Services() {
   return (
-    <div className="bg-gray-50 relative z-20 py-20">
-      <FadeInUp className="mx-auto max-w-6xl">
+    <section className="w-full py-20 px-6 md:px-24 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-2xl font-medium text-gray-800 mb-4">
             Our Service
@@ -62,7 +60,7 @@ export function Services() {
             </p>
           </div>
         </div>
-      </FadeInUp>
-    </div>
+      </div>
+    </section>
   );
 }

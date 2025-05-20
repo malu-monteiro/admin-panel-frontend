@@ -62,10 +62,10 @@ const ReviewCard = ({
       <div className="flex flex-row items-center gap-2">
         <img className="rounded-full" width={32} height={32} alt="" src={img} />
         <div className="flex flex-col">
-          <figcaption className="text-sm font-medium dark:text-white">
+          <figcaption className="text-sm font-medium text-gray-900">
             {name}
           </figcaption>
-          <p className="text-xs font-medium dark:text-white/40">{username}</p>
+          <p className="text-xs font-medium text-amber-300">{username}</p>
         </div>
       </div>
       <blockquote className="mt-2 text-sm">{body}</blockquote>
@@ -78,28 +78,32 @@ export function Reviews() {
   const secondRow = reviews.slice(reviews.length / 2);
 
   return (
-    <div className="relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
-      <div className="text-center mb-16">
-        <h2 className="text-2xl font-medium text-gray-800 mb-4">Our Reviews</h2>
+    <section className="w-full py-20 px-6 md:px-24 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-2xl font-medium text-gray-800 mb-4">
+            Our Reviews
+          </h2>
 
-        <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
-        <h3 className="text-3xl font-semibold text-gray-900 mt-6">
-          What They Say?
-        </h3>
+          <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
+          <h3 className="text-3xl font-semibold text-gray-900 mt-6">
+            What They Say?
+          </h3>
+        </div>
+
+        <Marquee pauseOnHover className="[--duration:20s]">
+          {firstRow.map((review) => (
+            <ReviewCard key={review.username} {...review} />
+          ))}
+        </Marquee>
+        <Marquee reverse pauseOnHover className="[--duration:20s]">
+          {secondRow.map((review) => (
+            <ReviewCard key={review.username} {...review} />
+          ))}
+        </Marquee>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
       </div>
-
-      <Marquee pauseOnHover className="[--duration:20s]">
-        {firstRow.map((review) => (
-          <ReviewCard key={review.username} {...review} />
-        ))}
-      </Marquee>
-      <Marquee reverse pauseOnHover className="[--duration:20s]">
-        {secondRow.map((review) => (
-          <ReviewCard key={review.username} {...review} />
-        ))}
-      </Marquee>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-    </div>
+    </section>
   );
 }

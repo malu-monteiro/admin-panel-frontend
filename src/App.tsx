@@ -7,7 +7,7 @@ import { queryClient } from "./lib/react-query";
 import { Toaster } from "sonner";
 
 import { NotFound } from "./pages/404";
-import { Hero } from "./pages/home/Hero";
+import { Home } from "./pages/home";
 import { SignIn } from "./pages/auth/SignIn";
 import { AdminPanel } from "./pages/admin/AdminPanel";
 import { ResetPassword } from "./pages/auth/ResetPassword";
@@ -25,7 +25,7 @@ export function App() {
         <Router>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Hero />} />
+            <Route path="/" element={<Home />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<VerifyEmailForm />} />

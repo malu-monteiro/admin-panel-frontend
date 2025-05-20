@@ -1,14 +1,12 @@
 import Cat from "@/assets/hero/cat.png";
-import { FadeInUp } from "./Hero";
 
 export function About() {
   return (
-    <div className="relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
-      <FadeInUp className="mx-auto flex max-w-6xl flex-col gap-12 md:flex-row md:items-center md:gap-24">
+    <section className="w-full py-28 px-6 md:px-24 bg-white">
+      <div className="relative z-20 max-w-6xl mx-auto flex flex-col gap-12 md:flex-row md:items-center md:gap-24">
         <div className="md:w-1/2">
           <img src={Cat} alt="Cat" className="h-auto w-full" />
         </div>
-
         <div className="flex flex-col gap-6 md:w-1/2 text-center md:text-left">
           <h3 className="text-3xl font-semibold text-gray-900 mt-6">
             The Best Service
@@ -34,7 +32,7 @@ export function About() {
             <p className="text-sm md:text-base leading-relaxed"></p>
           </div>
         </div>
-      </FadeInUp>
-    </div>
+      </div>
+    </section>
   );
 }

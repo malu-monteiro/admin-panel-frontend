@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@tailwind utilities;
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -123,7 +125,18 @@ button:focus-visible {
   }
 }
 
-@layer base {
+.bg-hero-bg {
+  background-image: url("/assets/hero/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+}
+
+/* @layer base {
   * {
     @apply border-border outline-ring/50;
   }
@@ -136,16 +149,8 @@ button:focus-visible {
       content: "";
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(
-          circle,
-          rgba(0, 0, 0, 0.07) 1px,
-          transparent 1px
-        ),
-        linear-gradient(to right, #ffd000, #fefce8);
-      background-size: 2px 2px, cover;
-      background-blend-mode: overlay;
       opacity: 1;
       z-index: 0;
     }
   }
-}
+} */

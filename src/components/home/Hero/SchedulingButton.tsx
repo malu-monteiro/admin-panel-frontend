@@ -110,7 +110,13 @@ export function SchedulingButton() {
       } catch (error) {
         console.error("Error fetching services:", error);
 
-        setServices(["Healthcare", "Daycare", "Training", "Pet Grooming"]);
+        setServices([
+          "Healthcare",
+          "Daycare",
+          "Training",
+          "Pet Grooming",
+          "Hygienic Care",
+        ]);
       }
     };
 

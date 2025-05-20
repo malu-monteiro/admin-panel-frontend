@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { FadeInUp } from "./Hero";
 
-export default function Newsletter() {
+export function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -34,8 +33,8 @@ export default function Newsletter() {
   };
 
   return (
-    <div className="relative z-20 py-20 px-6 md:px-24 -mt-20 lg:-mt-32">
-      <FadeInUp className="mx-auto max-w-6xl">
+    <section className="w-full py-20 px-6 md:px-24 bg-white">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16 max-w-xl mx-auto">
           <h2 className="text-2xl font-medium text-gray-800 mb-4">
             Our News & Promotions
@@ -85,7 +84,7 @@ export default function Newsletter() {
             </button>
           </form>
         </div>
-      </FadeInUp>
-    </div>
+      </div>
+    </section>
   );
 }

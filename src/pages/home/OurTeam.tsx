@@ -11,7 +11,7 @@ const team = [
   },
   {
     name: "Michael Ferguson",
-    role: "Daycare, Healthcare",
+    role: "Daycare, Healthcare, Hygienic Care",
     img: Michael,
     bg: "bg-cyan-400",
   },
@@ -25,8 +25,8 @@ const team = [
 
 export function OurTeam() {
   return (
-    <div className="bg-gray-50 min-h-screen flex items-center justify-center ">
-      <div className="w-full max-w-6xl mx-auto   rounded-lg p-8">
+    <section className="w-full py-20 px-6 md:px-24 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-2xl font-medium text-gray-800 mb-4">Our Team</h2>
 
@@ -62,6 +62,6 @@ export function OurTeam() {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
