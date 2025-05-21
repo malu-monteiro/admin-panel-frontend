@@ -1,45 +1,6 @@
 import { Marquee } from "@/components/magicui/marquee";
-
 import { cn } from "@/lib/utils";
-
-const reviews = [
-  {
-    name: "Milo Bennett",
-    username: "@milo.b",
-    body: "They treated my pup with so much care and attention. I couldn’t ask for better!",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_1.png",
-  },
-  {
-    name: "Luna Harper",
-    username: "@lunah",
-    body: "My dog came home happy, calm, and clearly well cared for. Highly recommend!",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_2.png",
-  },
-  {
-    name: "Theo Lang",
-    username: "@theolang",
-    body: "The trainers are patient, professional, and truly love animals.",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_3.png",
-  },
-  {
-    name: "Zara Quinn",
-    username: "@zquinn",
-    body: "I brought my cat in for a hygienic care session, and they did an incredible job!",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_9.png",
-  },
-  {
-    name: "Jenny",
-    username: "@jenny",
-    body: "The Daycare and grooming services are top-notch.",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_10.png",
-  },
-  {
-    name: "Finn Dawson",
-    username: "@finnd",
-    body: "From training to health checkups, every service we’ve tried has been incredible.",
-    img: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_14.png",
-  },
-];
+import { OUR_REVIEWS } from "@/constants";
 
 const ReviewCard = ({
   img,
@@ -74,16 +35,23 @@ const ReviewCard = ({
 };
 
 export function OurReviews() {
-  const firstRow = reviews.slice(0, reviews.length / 2);
-  const secondRow = reviews.slice(reviews.length / 2);
+  const firstRow = OUR_REVIEWS.reviewsList.slice(
+    0,
+    OUR_REVIEWS.reviewsList.length / 2
+  );
+  const secondRow = OUR_REVIEWS.reviewsList.slice(
+    OUR_REVIEWS.reviewsList.length / 2
+  );
 
   return (
     <section className="w-full py-20 px-6 md:px-24 bg-white">
       <div className="max-w-6xl mx-auto text-center mb-16">
-        <h2 className="text-2xl font-medium text-gray-800 mb-4">Our Reviews</h2>
+        <h2 className="text-2xl font-medium text-gray-800 mb-4">
+          {OUR_REVIEWS.titles.main}
+        </h2>
         <div className="h-1 w-24 bg-amber-300 rounded-full mx-auto" />
         <h3 className="text-3xl font-semibold text-gray-900 mt-6">
-          What They Say?
+          {OUR_REVIEWS.titles.subtitle}
         </h3>
       </div>
 
@@ -98,8 +66,6 @@ export function OurReviews() {
             <ReviewCard key={review.username} {...review} />
           ))}
         </Marquee>
-
-        {/* Gradients for fading edges effect */}
 
         <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background" />

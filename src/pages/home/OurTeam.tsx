@@ -1,6 +1,6 @@
-import Sarah from "../../assets/team/sarah.jpg";
-import Michael from "../../assets/team/michael.jpeg";
-import Vanessa from "../../assets/team/vanessa.jpg";
+import Sarah from "../../assets/home/our-team/sarah.jpg";
+import Michael from "../../assets/home/our-team/michael.jpeg";
+import Vanessa from "../../assets/home/our-team/vanessa.jpg";
 
 const team = [
   {
