@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { OUR_NEWS } from "@/constants";
 
 export function OurNews() {

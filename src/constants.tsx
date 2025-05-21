@@ -161,10 +161,12 @@ export const FOOTER = {
       links: [{ label: "Contact Us", href: "#" }],
     },
   ],
+  socialMediaTitle: "Follow Us",
   socialMedia: [
-    { label: "Facebook", href: "#", iconName: "FaFacebookF" as IconName },
-    { label: "Instagram", href: "#", iconName: "FaInstagram" as IconName },
-    { label: "YouTube", href: "#", iconName: "FaYoutube" as IconName },
+    { label: "Facebook", href: "#", iconName: "FaFacebookF" },
+    { label: "Instagram", href: "#", iconName: "FaInstagram" },
+    { label: "YouTube", href: "#", iconName: "FaYoutube" },
+    { label: "X", href: "#", iconName: "FaXTwitter" },
   ],
   copyright: {
     year: 2025,
