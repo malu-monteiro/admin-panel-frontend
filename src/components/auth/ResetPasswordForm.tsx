@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { Slideshow } from "./Slideshow";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-import { Slideshow } from "./Slideshow";
 
 import { validatePassword, handleApiError } from "@/utils/auth";
 
@@ -19,7 +18,7 @@ export function ResetPasswordForm() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (!token) {
@@ -29,36 +28,26 @@ export function ResetPasswordForm() {
 
   const resetPasswordMutation = useResetPasswordMutation(token);
 
+  const passwordError = password ? validatePassword(password) : "";
+  const confirmError =
+    password && confirmPassword && password !== confirmPassword
+      ? "Passwords do not match"
+      : "";
+  const error = passwordError || confirmError;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-      setError(passwordError);
+    if (error) {
+      setSubmitError(error);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
+    setSubmitError("");
     resetPasswordMutation.mutate(password, {
-      onError: (error) => setError(handleApiError(error)),
+      onError: (error) => setSubmitError(handleApiError(error)),
     });
   };
-
-  useEffect(() => {
-    if (password && confirmPassword) {
-      const passwordError = validatePassword(password);
-      const confirmError =
-        password !== confirmPassword ? "Passwords do not match" : "";
-
-      setError(passwordError || confirmError);
-    } else {
-      setError("");
-    }
-  }, [password, confirmPassword]);
 
   return (
     <Card className="relative overflow-hidden w-full max-w-sm md:max-w-3xl">
@@ -71,6 +60,24 @@ export function ResetPasswordForm() {
                 Enter your new password
               </p>
             </div>
+
+            {submitError && (
+              <div className="text-red-500 text-sm flex items-center gap-2 mb-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {submitError}
+              </div>
+            )}
 
             <div className="grid gap-4">
               <div className="grid gap-2">
@@ -102,7 +109,7 @@ export function ResetPasswordForm() {
               </div>
 
               <div
-                className="text-red-500 text-sm flex items-center gap-2"
+                className="text-red-500 text-sm flex items-center gap-2 mb-2"
                 style={{
                   visibility: error ? "visible" : "hidden",
                   minHeight: "1.25rem",
