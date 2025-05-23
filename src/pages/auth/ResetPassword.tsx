@@ -8,9 +8,12 @@ export function ResetPassword() {
   useAuth({ redirectToIfAuthenticated: "/admin-panel" });
 
   return (
-    <AuthPageLayout>
+    <>
       <Title>Reset Password</Title>
-      <ResetPasswordForm />
-    </AuthPageLayout>
+
+      <AuthPageLayout>
+        <ResetPasswordForm />
+      </AuthPageLayout>
+    </>
   );
 }

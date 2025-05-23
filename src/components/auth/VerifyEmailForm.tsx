@@ -127,7 +127,7 @@ export function VerifyEmailForm() {
           <Button
             type="button"
             className="w-full"
-            onClick={() => navigate("/admin-panel")}
+            onClick={() => setTimeout(() => navigate("/admin-panel"), 300)}
           >
             Back to Admin Panel
           </Button>

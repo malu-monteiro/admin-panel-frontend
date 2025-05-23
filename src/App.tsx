@@ -10,12 +10,12 @@ import { NotFound } from "./pages/404";
 import { Home } from "./pages/home";
 import { SignIn } from "./pages/auth/SignIn";
 import { AdminPanel } from "./pages/admin/AdminPanel";
+import { VerifyEmail } from "./pages/auth/VerifyEmail";
 import { ResetPassword } from "./pages/auth/ResetPassword";
 
 import { PrivateRoute } from "./routes/PrivateRoute";
 
 import { AuthProvider } from "./contexts/AuthProvider";
-import { VerifyEmailForm } from "./components/auth/VerifyEmailForm";
 
 export function App() {
   return (
@@ -28,15 +28,15 @@ export function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<VerifyEmailForm />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
 
             {/* Protected routes */}
             <Route
               path="/admin-panel"
               element={
-                // <PrivateRoute>
-                <AdminPanel />
-                // </PrivateRoute>
+                <PrivateRoute>
+                  <AdminPanel />
+                </PrivateRoute>
               }
             />
 

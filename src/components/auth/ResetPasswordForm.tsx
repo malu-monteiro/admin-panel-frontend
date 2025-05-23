@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Input } from "@/components/ui/input";
@@ -7,27 +6,20 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-import Slideshow from "./Slideshow";
+import { Slideshow } from "./Slideshow";
 
-import { ErrorResponse } from "@/types";
+import { validatePassword, handleApiError } from "@/utils/auth";
+
+import { useResetPasswordMutation } from "@/hooks/useResetPasswordMutation";
 
 export function ResetPasswordForm() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-
-  const validatePassword = (password: string) => {
-    if (password.length < 6) {
-      return "The password must be at least 6 characters long";
-    }
-    if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
-      return "Must contain letters and numbers";
-    }
-    return null;
-  };
 
   useEffect(() => {
     if (!token) {
@@ -35,46 +27,7 @@ export function ResetPasswordForm() {
     }
   }, [token, navigate]);
 
-  const handleApiError = (error: unknown): string => {
-    if (error instanceof Error) {
-      try {
-        const errorData: ErrorResponse = JSON.parse(error.message);
-        return errorData.message || errorData.error || error.message;
-      } catch {
-        return error.message;
-      }
-    }
-    return "An unknown error ocurred";
-  };
-
-  const resetPasswordMutation = useMutation({
-    mutationFn: async (newPassword: string) => {
-      const response = await fetch(
-        "http://localhost:3000/auth/reset-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, newPassword }),
-        }
-      );
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(JSON.stringify(data));
-      }
-      return data;
-    },
-
-    onSuccess: () => {
-      navigate("/sign-in", {
-        replace: true,
-        state: { success: "Password reset successfully!" },
-      });
-    },
-    onError: (error: Error) => {
-      setError(handleApiError(error));
-    },
-  });
+  const resetPasswordMutation = useResetPasswordMutation(token);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +43,9 @@ export function ResetPasswordForm() {
       return;
     }
 
-    resetPasswordMutation.mutate(password);
+    resetPasswordMutation.mutate(password, {
+      onError: (error) => setError(handleApiError(error)),
+    });
   };
 
   useEffect(() => {

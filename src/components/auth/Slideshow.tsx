@@ -9,7 +9,7 @@ import Spa from "@/assets/slideshow/spa-business.jpg";
 
 const Images = [Automotive, CoffeeShop, Hairdresser, Petshop, Restaurant, Spa];
 
-export default function Slideshow() {
+export function Slideshow() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {

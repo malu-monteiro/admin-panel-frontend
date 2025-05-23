@@ -11,3 +11,26 @@ export function isAuthenticated(): boolean {
     return false;
   }
 }
+
+export function validatePassword(password: string): string | null {
+  if (password.length < 6) {
+    return "The password must be at least 6 characters long";
+  }
+
+  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
+    return "Must contain letters and numbers";
+  }
+  return null;
+}
+
+export function handleApiError(error: unknown): string {
+  if (error instanceof Error) {
+    try {
+      const errorData = JSON.parse(error.message);
+      return errorData.message || errorData.error || error.message;
+    } catch {
+      return error.message;
+    }
+  }
+  return "An unknown error ocurred";
+}

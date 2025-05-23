@@ -17,7 +17,6 @@ export function AdminPanel() {
   const safeUser = user || {
     name: "Admin",
     email: "admin@example.com",
-    avatar: "/avatars/default.jpg",
   };
 
   useEffect(() => {
