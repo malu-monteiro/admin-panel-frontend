@@ -2,7 +2,7 @@ import { FadeInUp } from ".";
 
 import { HERO } from "@/constants";
 
-import { SchedulingButton } from "./SchedulingButton";
+import { SchedulingButton } from "../../components/home/Hero/SchedulingButton";
 
 export function Hero() {
   return (
