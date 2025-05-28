@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -70,7 +70,7 @@ export function ManageDates() {
 
   const selectedDate = watch("date");
 
-  const fetchBlocks = async () => {
+  const fetchBlocks = useCallback(async () => {
     try {
       const startDate = dayjs()
         .tz(TIMEZONE)
@@ -87,14 +87,14 @@ export function ManageDates() {
 
       setBlocks([...response.data]);
     } catch (error) {
-      console.error("Error fetching blocks:", error);
       let message = "Failed to load blocks";
       if (isAxiosError(error)) {
         message = error.response?.data?.error || message;
       }
       toast.error(message);
+      console.error("Error fetching blocks:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -111,10 +111,11 @@ export function ManageDates() {
           message = error.response?.data?.error || message;
         }
         toast.error(message);
+        console.error(error);
       }
     };
     loadData();
-  }, []);
+  }, [fetchBlocks]);
 
   const hours = useMemo(() => {
     if (!workingHours) return [];
@@ -155,6 +156,7 @@ export function ManageDates() {
         message = error.response?.data?.error || message;
       }
       toast.error(message);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -214,6 +216,7 @@ export function ManageDates() {
         message = error.response?.data?.error || message;
       }
       toast.error(message);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
