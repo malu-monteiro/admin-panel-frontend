@@ -31,7 +31,7 @@ export function BusinessHours() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    async function fetchWorkingHours() {
+    const fetchWorkingHours = async () => {
       try {
         const { data } = await API.get("/availability/working-hours");
         setWorkingHours(data);
@@ -39,7 +39,7 @@ export function BusinessHours() {
         toast.error("Error loading Business Hours");
         console.error(error);
       }
-    }
+    };
     fetchWorkingHours();
   }, []);
 
