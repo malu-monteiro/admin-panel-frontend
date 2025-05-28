@@ -89,13 +89,6 @@ export type FormData = {
   confirmPassword?: string;
 };
 
-export type AccountModalProps = {
-  user: User;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onUpdate: (newData: Partial<User>) => void;
-};
-
 export type AuthContextType = {
   user: User | null;
   login: (token: string, userData: User) => void;
@@ -109,6 +102,27 @@ export type UseAuthOptions = {
   redirectToIfNotAuthenticated?: string;
 };
 
+/* AccountModal */
+
+export type AccountModalProps = {
+  user: {
+    name: string;
+    email: string;
+  };
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onUpdate: (newData: Partial<User>) => void;
+};
+
+/* NavUser */
+
+export type NavUserProps = {
+  user: User;
+  onUserUpdate: (newData: Partial<User>) => void;
+  initialAccountOpen?: boolean;
+  onAccountOpenChange?: (open: boolean) => void;
+};
+
 /* AppSidebar Types */
 
 export type AppSidebarProps = {
@@ -118,13 +132,6 @@ export type AppSidebarProps = {
   onAccountOpenChange?: (open: boolean) => void;
   onUserUpdate: (newData: Partial<User>) => void;
 } & React.HTMLAttributes<HTMLDivElement>;
-
-export type NavUserProps = {
-  user: User;
-  initialAccountOpen?: boolean;
-  onAccountOpenChange?: (open: boolean) => void;
-  onUserUpdate: (newData: Partial<User>) => void;
-};
 
 /* Email Validation Types */
 

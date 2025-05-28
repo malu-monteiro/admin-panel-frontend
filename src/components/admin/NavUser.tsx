@@ -1,9 +1,12 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { LogOutIcon, MoreVerticalIcon, UserCircleIcon } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AccountModal } from "./AccountModal";
+
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,34 +16,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-import { AccountModal } from "./AccountModal";
+import { NavUserProps } from "@/types";
 
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { getInitials } from "@/utils/nav-user";
 
-interface NavUserProps {
-  user: {
-    name: string;
-    email: string;
-  };
-  onUserUpdate: (newData: { name?: string; email?: string }) => void;
-  initialAccountOpen?: boolean;
-  onAccountOpenChange?: (open: boolean) => void;
-}
-
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { useNavUser } from "@/hooks/useNavUser";
 
 export function NavUser({
   user,
@@ -48,23 +30,13 @@ export function NavUser({
   initialAccountOpen = false,
   onAccountOpenChange,
 }: NavUserProps) {
-  const { isMobile } = useSidebar();
-  const [accountOpen, setAccountOpen] = useState(initialAccountOpen);
-  const { logout } = useAuthContext();
-  const navigate = useNavigate();
-
-  const handleOpenChange = useCallback(
-    (open: boolean) => {
-      setAccountOpen(open);
-      onAccountOpenChange?.(open);
-    },
-    [onAccountOpenChange]
-  );
-
-  const handleLogout = useCallback(() => {
-    logout();
-    navigate("/sign-in");
-  }, [logout, navigate]);
+  const {
+    isMobile,
+    accountOpen,
+    setAccountOpen,
+    handleOpenChange,
+    handleLogout,
+  } = useNavUser({ initialAccountOpen, onAccountOpenChange });
 
   return (
     <>
