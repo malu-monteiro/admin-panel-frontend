@@ -42,7 +42,11 @@ export type Block = {
   id: number;
   date: string;
   isBlocked: boolean;
-  blockedSlots: BlockedSlot[] | null;
+  blockedSlots?: Array<{
+    id: number;
+    startTime: string;
+    endTime: string;
+  }>;
 };
 
 export type AppointmentData = {

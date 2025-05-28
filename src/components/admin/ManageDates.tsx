@@ -85,7 +85,7 @@ export function ManageDates() {
         },
       });
 
-      setBlocks(response.data);
+      setBlocks([...response.data]);
     } catch (error) {
       console.error("Error fetching blocks:", error);
       let message = "Failed to load blocks";
@@ -142,6 +142,7 @@ export function ManageDates() {
       });
 
       if (blockResponse.status === 201) {
+        setBlocks((prev) => [...prev, blockResponse.data]);
         toast.success("Time slot blocked!");
         setTimeout(() => {
           fetchBlocks();

@@ -1,7 +1,3 @@
-Gerenciar bloqueios de disponibilidade em um sistema de agendamento (ex: calendário médico, reservas).
+This feature allows administrators to manage availability blocks in a scheduling system (e.g., for a medical calendar or reservation platform).
 
-ActiveBlocks
-ManageDates
-ManageServices
-
-alinhar client e fetchuserdata com backend
+[ ] Fix the availability blocks logic in SchedulingButton.tsx.

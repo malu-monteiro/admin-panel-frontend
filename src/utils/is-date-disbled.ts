@@ -1,17 +1,19 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import isBetween from "dayjs/plugin/isBetween";
 
 import { Block } from "@/types";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(isBetween);
 
 type Options = {
   timezone?: string;
   blockWeekends?: boolean;
   allowAfterHours?: boolean;
-  blockedDates?: Date[]; // for client-side
+  blockedDates?: Date[]; // for user-side
   blocks?: Block[]; // for admin
 };
 
@@ -23,7 +25,7 @@ export function isDateDisabled(
     blocks = [],
     blockWeekends = true,
     allowAfterHours = true,
-    timezone = "UTC",
+    timezone = "America/Sao_Paulo",
   } = options;
 
   const now = dayjs().tz(timezone);
@@ -53,7 +55,7 @@ export function isDateDisabled(
           .set("hour", parseInt(slot.endTime.split(":")[0]))
           .set("minute", parseInt(slot.endTime.split(":")[1]));
 
-        return selected.isBetween(start, end, null, "[]");
+        selected.isBetween(start, end, null, "[)");
       }) || false
     );
   });
