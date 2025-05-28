@@ -166,6 +166,7 @@ export function ManageServices() {
                   >
                     <AlertDialogTrigger asChild>
                       <Button
+                        className="hover:!bg-red-500"
                         aria-label="Delete service"
                         variant="ghost"
                         size="icon"
@@ -174,7 +175,7 @@ export function ManageServices() {
                         {isDeleting === service.id ? (
                           <Loader2Icon className="w-5 h-5 animate-spin" />
                         ) : (
-                          <XIcon className="w-5 h-5 text-white" />
+                          <XIcon className="w-5 h-5 text-white " />
                         )}
                       </Button>
                     </AlertDialogTrigger>

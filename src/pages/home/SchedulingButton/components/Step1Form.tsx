@@ -1,5 +1,7 @@
-import { Step1Data } from "@/components/home/Hero/SchedulingButton/schemas/schedulingSchemas";
+import dayjs from "dayjs";
+
 import { UseFormReturn } from "react-hook-form";
+
 import {
   Select,
   SelectContent,
@@ -9,39 +11,49 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+
 import { isDateDisabled } from "@/utils/is-date-disbled";
 
-interface Step1FormProps {
-  form: UseFormReturn<Step1Data>;
+import { Step1Data } from "../schemas/schedulingSchemas";
+
+import { Block } from "@/types";
+
+type Step1FormProps = {
+  step1Form: UseFormReturn<Step1Data>;
   services: string[];
-  blockedDates: Date[];
   availableTimes: string[];
   selectedDate: Date | undefined;
-  setSelectedDate: (date: Date | undefined) => void;
-  onSubmit: () => void;
-}
+  setSelectedDate: (date: Date) => void;
+  timeBlocks: Block[];
+  handleStep1Submit: () => void;
+  TIMEZONE: string;
+};
 
 export function Step1Form({
-  form,
+  step1Form,
   services,
-  blockedDates,
   availableTimes,
   selectedDate,
   setSelectedDate,
-  onSubmit,
+  timeBlocks,
+  handleStep1Submit,
+  TIMEZONE,
 }: Step1FormProps) {
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={step1Form.handleSubmit(handleStep1Submit)}
+      className="space-y-4"
+    >
       <div>
         <label className="block text-sm font-medium mb-1">
           Select a service
         </label>
         <Select
           onValueChange={(value) => {
-            form.setValue("service", value);
-            form.trigger("service");
+            step1Form.setValue("service", value);
+            step1Form.trigger("service");
           }}
-          value={form.watch("service")}
+          value={step1Form.watch("service")}
         >
           <SelectTrigger className="!bg-neutral-100">
             <SelectValue placeholder="Select..." />
@@ -58,9 +70,9 @@ export function Step1Form({
             ))}
           </SelectContent>
         </Select>
-        {form.formState.errors.service && (
+        {step1Form.formState.errors.service && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.service.message}
+            {step1Form.formState.errors.service.message}
           </p>
         )}
       </div>
@@ -69,30 +81,30 @@ export function Step1Form({
         <label className="block text-sm font-medium mb-1">Choose a date</label>
         <Calendar
           mode="single"
-          selected={form.watch("date")}
+          selected={step1Form.watch("date")}
           onSelect={(date) => {
             if (date) {
-              const localDate = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate()
-              );
-              form.setValue("date", localDate);
-              form.trigger("date");
+              const localDate = dayjs(date)
+                .tz(TIMEZONE)
+                .startOf("day")
+                .toDate();
+              step1Form.setValue("date", localDate);
               setSelectedDate(localDate);
             }
           }}
           disabled={(date) =>
             isDateDisabled(date, {
-              blockedDates,
+              timezone: TIMEZONE,
+              blocks: timeBlocks,
+              blockWeekends: true,
               allowAfterHours: false,
             })
           }
           className="rounded-md border"
         />
-        {form.formState.errors.date && (
+        {step1Form.formState.errors.date && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.date.message}
+            {step1Form.formState.errors.date.message}
           </p>
         )}
       </div>
@@ -104,10 +116,10 @@ export function Step1Form({
           </label>
           <Select
             onValueChange={(value) => {
-              form.setValue("time", value);
-              form.trigger("time");
+              step1Form.setValue("time", value);
+              step1Form.trigger("time");
             }}
-            value={form.watch("time")}
+            value={step1Form.watch("time")}
           >
             <SelectTrigger className="!bg-neutral-100">
               <SelectValue placeholder="Select..." />
@@ -124,9 +136,9 @@ export function Step1Form({
               ))}
             </SelectContent>
           </Select>
-          {form.formState.errors.time && (
+          {step1Form.formState.errors.time && (
             <p className="text-sm text-red-500 mt-1">
-              {form.formState.errors.time.message}
+              {step1Form.formState.errors.time.message}
             </p>
           )}
         </div>
@@ -135,7 +147,7 @@ export function Step1Form({
       <Button
         type="submit"
         className="w-full hover:bg-accent hover:text-muted-foreground "
-        disabled={!form.formState.isValid}
+        disabled={!step1Form.formState.isValid}
       >
         Continue
       </Button>

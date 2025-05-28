@@ -115,6 +115,7 @@ export function ActiveBlocks() {
                   <td className="py-2 px-4">-</td>
                   <td className="py-2 px-4">
                     <Button
+                      className="hover:!bg-red-500"
                       variant="destructive"
                       size="sm"
                       onClick={() => handleUnblock("day", block.id)}

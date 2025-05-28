@@ -259,7 +259,7 @@ export function ManageDates() {
                 value={watch("startTime")}
                 onValueChange={(value) => setValue("startTime", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="!bg-neutral-100">
                   <SelectValue placeholder="Select start time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -283,7 +283,7 @@ export function ManageDates() {
                 value={watch("endTime")}
                 onValueChange={(value) => setValue("endTime", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="!bg-neutral-100">
                   <SelectValue placeholder="Select end time" />
                 </SelectTrigger>
                 <SelectContent>

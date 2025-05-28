@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const step1Schema = z.object({
   service: z.string().min(1, "Please select a service"),
@@ -19,3 +20,7 @@ export const step2Schema = z.object({
 
 export type Step1Data = z.infer<typeof step1Schema>;
 export type Step2Data = z.infer<typeof step2Schema>;
+export type AppointmentData = Step1Data & Step2Data;
+
+export const step1Resolver = zodResolver(step1Schema);
+export const step2Resolver = zodResolver(step2Schema);

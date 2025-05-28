@@ -89,7 +89,7 @@ export function BusinessHours() {
                     )
                   }
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full !bg-neutral-100">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -111,7 +111,7 @@ export function BusinessHours() {
                     )
                   }
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full !bg-neutral-100">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
