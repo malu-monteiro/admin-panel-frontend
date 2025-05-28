@@ -58,6 +58,22 @@ export type AppointmentData = {
   message?: string;
 };
 
+/* ActiveBlocks */
+export type UnblockType = "day" | "slot";
+export type BlockStatus = "All Day" | "Time Slot";
+
+export interface BlockRowProps {
+  block: Block;
+  onUnblock: (type: UnblockType, id: number) => void;
+  formatTimeSlot: (date: string | Date, start?: string, end?: string) => string;
+}
+
+export interface TimeSlotParams {
+  date: string | Date;
+  start?: string;
+  end?: string;
+}
+
 /* Auth Types */
 
 export type User = {
