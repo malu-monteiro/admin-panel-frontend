@@ -1,12 +1,12 @@
+import { useState, useEffect, useCallback } from "react";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { useState, useEffect } from "react";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { WorkingHours } from "@/types";
+
 import {
   Select,
   SelectContent,
@@ -14,6 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 import { toast } from "sonner";
 
 import API, { isAxiosError } from "@/lib/api/client";
@@ -23,37 +27,46 @@ dayjs.extend(timezone);
 dayjs.extend(isSameOrAfter);
 
 export function BusinessHours() {
-  const [workingHours, setWorkingHours] = useState<{
-    startTime: string;
-    endTime: string;
-  } | null>(null);
-  const [isEditingHours, setIsEditingHours] = useState(false);
+  const [workingHours, setWorkingHours] = useState<WorkingHours | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const loadWorkingHours = async () => {
+    async function fetchWorkingHours() {
       try {
         const { data } = await API.get("/availability/working-hours");
         setWorkingHours(data);
       } catch (error) {
-        toast.error("Error loading hours");
+        toast.error("Error loading Business Hours");
         console.error(error);
       }
-    };
-    loadWorkingHours();
+    }
+    fetchWorkingHours();
   }, []);
 
-  const handleSaveWorkingHours = async () => {
+  const hourOptions = Array.from(
+    { length: 24 },
+    (_, i) => `${i.toString().padStart(2, "0")}:00`
+  );
+
+  const handleChange = useCallback(
+    (field: keyof WorkingHours, value: string) => {
+      setWorkingHours((prev) => (prev ? { ...prev, [field]: value } : null));
+    },
+    []
+  );
+
+  const handleSave = async () => {
     if (!workingHours) return;
     try {
-      const response = await API.post("/availability/working-hours", {
-        startTime: workingHours.startTime,
-        endTime: workingHours.endTime,
-      });
-      setWorkingHours(response.data);
-      toast.success("Working hours updated successfully!");
-      setIsEditingHours(false);
+      const { data } = await API.post(
+        "/availability/working-hours",
+        workingHours
+      );
+      setWorkingHours(data);
+      toast.success("Business Hours updated successfully!");
+      setIsEditing(false);
     } catch (error) {
-      let message = "Error updating working hours";
+      let message = "Error updating time";
       if (isAxiosError(error)) {
         message = error.response?.data?.error || message;
         if (error.response?.data?.details) {
@@ -61,21 +74,14 @@ export function BusinessHours() {
         }
       }
       toast.error(message);
-      console.error("Full error:", error);
+      console.error("Complete error:", error);
     }
-  };
-
-  const generateHourOptions = () => {
-    return Array.from({ length: 24 }, (_, i) => {
-      const hour = i.toString().padStart(2, "0");
-      return `${hour}:00`;
-    });
   };
 
   return (
     <div>
       <Card className="p-4 w-full max-w-md">
-        {isEditingHours ? (
+        {isEditing ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -83,17 +89,13 @@ export function BusinessHours() {
                 <Label className="text-sm font-medium">Opening Time</Label>
                 <Select
                   value={workingHours?.startTime || ""}
-                  onValueChange={(value) =>
-                    setWorkingHours((prev) =>
-                      prev ? { ...prev, startTime: value } : null
-                    )
-                  }
+                  onValueChange={(value) => handleChange("startTime", value)}
                 >
                   <SelectTrigger className="w-full !bg-neutral-100">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {generateHourOptions().map((time) => (
+                    {hourOptions.map((time) => (
                       <SelectItem key={time} value={time}>
                         {time}
                       </SelectItem>
@@ -101,21 +103,18 @@ export function BusinessHours() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-1">
                 <Label className="text-sm font-medium">Closing Time</Label>
                 <Select
                   value={workingHours?.endTime || ""}
-                  onValueChange={(value) =>
-                    setWorkingHours((prev) =>
-                      prev ? { ...prev, endTime: value } : null
-                    )
-                  }
+                  onValueChange={(value) => handleChange("endTime", value)}
                 >
                   <SelectTrigger className="w-full !bg-neutral-100">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {generateHourOptions().map((time) => (
+                    {hourOptions.map((time) => (
                       <SelectItem key={time} value={time}>
                         {time}
                       </SelectItem>
@@ -124,15 +123,16 @@ export function BusinessHours() {
                 </Select>
               </div>
             </div>
+
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsEditingHours(false)}
+                onClick={() => setIsEditing(false)}
               >
                 Cancel
               </Button>
-              <Button size="sm" onClick={handleSaveWorkingHours}>
+              <Button size="sm" onClick={handleSave}>
                 Save
               </Button>
             </div>
@@ -148,7 +148,7 @@ export function BusinessHours() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIsEditingHours(true)}
+              onClick={() => setIsEditing(true)}
             >
               Edit
             </Button>
