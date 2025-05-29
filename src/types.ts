@@ -76,6 +76,31 @@ export interface TimeSlotParams {
 
 /* Auth Types */
 
+export interface NavItem {
+  title: string;
+  url: string;
+  isActive?: boolean;
+}
+
+export interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+export interface NavData {
+  navMain: NavGroup[];
+}
+
+export type AppSidebarProps = {
+  onSelectItem?: (panelName: string) => void;
+  user?: User | null;
+  initialAccountOpen?: boolean;
+  onAccountOpenChange?: (open: boolean) => void;
+  onUserUpdate: (newData: Partial<User>) => void;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+/* Auth Types */
+
 export type User = {
   name: string;
   email: string;
@@ -122,16 +147,6 @@ export type NavUserProps = {
   initialAccountOpen?: boolean;
   onAccountOpenChange?: (open: boolean) => void;
 };
-
-/* AppSidebar Types */
-
-export type AppSidebarProps = {
-  onSelectItem?: (panelName: string) => void;
-  user?: User | null;
-  initialAccountOpen?: boolean;
-  onAccountOpenChange?: (open: boolean) => void;
-  onUserUpdate: (newData: Partial<User>) => void;
-} & React.HTMLAttributes<HTMLDivElement>;
 
 /* Email Validation Types */
 

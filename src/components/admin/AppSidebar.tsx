@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { NavUser } from "./NavUser";
+
+import { AppSidebarProps } from "@/types";
 
 import {
   Sidebar,
@@ -13,10 +15,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { NavUser } from "./NavUser";
-
-import { AppSidebarProps } from "@/types";
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useAppSidebar } from "@/hooks/useAppSidebar";
 
 export function AppSidebar({
   onSelectItem,
@@ -26,36 +25,7 @@ export function AppSidebar({
   onUserUpdate,
   ...props
 }: AppSidebarProps) {
-  const [navData, setNavData] = useState(initialData);
-  const { user: authUser } = useAuthContext();
-
-  const defaultUser = {
-    name: "User",
-    email: "user@example.com",
-    avatar: "/avatars/default.jpg",
-  };
-
-  const resolvedUser = user || authUser || defaultUser;
-
-  const handleItemClick = (
-    groupIndex: number,
-    itemIndex: number,
-    itemTitle: string
-  ) => {
-    setNavData((prevData) => {
-      const newData = { ...prevData };
-      newData.navMain.forEach((group) => {
-        group.items.forEach((item) => {
-          item.isActive = false;
-        });
-      });
-
-      newData.navMain[groupIndex].items[itemIndex].isActive = true;
-      return newData;
-    });
-
-    onSelectItem?.(itemTitle);
-  };
+  const { navData, resolvedUser, handleItemClick } = useAppSidebar(user);
 
   return (
     <Sidebar {...props}>
@@ -66,6 +36,7 @@ export function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         {navData.navMain.map((group, groupIndex) => (
           <SidebarGroup key={group.title}>
@@ -78,7 +49,12 @@ export function AppSidebar({
                       asChild
                       isActive={item.isActive}
                       onClick={() =>
-                        handleItemClick(groupIndex, itemIndex, item.title)
+                        handleItemClick(
+                          groupIndex,
+                          itemIndex,
+                          item.title,
+                          onSelectItem
+                        )
                       }
                     >
                       <a href="#">{item.title}</a>
@@ -90,6 +66,7 @@ export function AppSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser
           user={resolvedUser}
@@ -101,30 +78,3 @@ export function AppSidebar({
     </Sidebar>
   );
 }
-
-const initialData = {
-  navMain: [
-    {
-      title: "Building Your Schedule",
-      items: [
-        {
-          title: "Business Hours",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Manage Services",
-          url: "#",
-        },
-        {
-          title: "Manage Dates",
-          url: "#",
-        },
-        {
-          title: "Active Blocks",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};

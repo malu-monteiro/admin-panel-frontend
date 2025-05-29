@@ -3,9 +3,9 @@ import { User } from "@/types";
 import { useEffect, useState } from "react";
 
 import { AppSidebar } from "@/components/admin/AppSidebar";
-import { AdminLayout } from "@/components/admin/layout/AdminLayout";
-import { AdminHeader } from "@/components/admin/layout/AdminHeader";
-import { AdminContent } from "@/components/admin/layout/AdminContent";
+import { AdminLayout } from "@/components/admin/_layout/AdminLayout";
+import { AdminHeader } from "@/components/admin/_layout/AdminHeader";
+import { AdminContent } from "@/components/admin/_layout/AdminContent";
 
 import { useAuthContext } from "@/hooks/useAuthContext";
 
