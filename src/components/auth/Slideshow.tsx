@@ -29,7 +29,20 @@ export function Slideshow() {
         alt="Imagem"
         className="h-full w-full object-cover"
       />
+
+      {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/50" />
+
+      {/* Left side with blur */}
+      <div
+        className="
+      absolute left-0 top-0
+      h-full w-32
+      bg-gradient-to-r from-white/40 to-transparent
+      pointer-events-none
+      z-10
+    "
+      />
     </div>
   );
 }

@@ -1,43 +1,34 @@
+import { useCallback, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { VerifyEmailResponse } from "@/types";
+
 import { Loader2 } from "lucide-react";
+
+import { VerifyEmailResponse } from "@/types";
+
+import { verifyEmail } from "@/services/auth";
+
+import { VERIFY_TOKEN_REGEX, VERIFY_TOKEN_ERROR } from "@/utils/validation";
 
 export function VerifyEmailForm() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const [manualToken, setManualToken] = useState("");
+  const [inputToken, setInputToken] = useState("");
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
   const verifyMutation = useMutation<VerifyEmailResponse, Error, string>({
-    mutationFn: async (verificationToken: string) => {
-      const response = await fetch(`${API_URL}/auth/verify-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: verificationToken }),
-        credentials: "include",
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(JSON.stringify(data));
-      return data;
-    },
+    mutationFn: verifyEmail,
     onSuccess: (data) => {
       setSuccess(data.message);
-      setTimeout(() => {
-        if (data.newEmail) {
-          localStorage.setItem("userEmail", data.newEmail);
-        }
-        navigate("/admin-panel");
-      }, 2000);
+      if (data.newEmail) {
+        localStorage.setItem("userEmail", data.newEmail);
+      }
     },
 
     onError: (error: Error) => {
@@ -50,27 +41,40 @@ export function VerifyEmailForm() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
 
-    const verificationToken = manualToken || token;
+      const verificationToken = inputToken || token;
 
-    if (!verificationToken) {
-      setError("Please enter your verification token");
-      return;
-    }
+      if (!verificationToken) {
+        setError("Please enter your verification token");
+        return;
+      }
 
-    if (!/^[a-zA-Z0-9-_]{20,}$/.test(verificationToken)) {
-      setError("Invalid token format");
-      return;
-    }
+      if (!VERIFY_TOKEN_REGEX.test(verificationToken)) {
+        setError(VERIFY_TOKEN_ERROR);
+        return;
+      }
 
-    verifyMutation.mutate(verificationToken);
-  };
+      verifyMutation.mutate(verificationToken);
+    },
+    [inputToken, token, verifyMutation]
+  );
 
   useEffect(() => {
-    if (token) setManualToken(token);
+    if (token) setInputToken(token);
   }, [token]);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        navigate("/admin-panel");
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [success, navigate]);
 
   return (
     <div className="max-w-md mx-auto p-6">
@@ -80,8 +84,11 @@ export function VerifyEmailForm() {
           <Label htmlFor="token">Verification Token</Label>
           <Input
             id="token"
-            value={manualToken}
-            onChange={(e) => setManualToken(e.target.value)}
+            value={inputToken}
+            onChange={(e) => {
+              setInputToken(e.target.value);
+              if (error) setError("");
+            }}
             placeholder="Enter verification token"
             disabled={verifyMutation.isPending}
           />
@@ -92,6 +99,7 @@ export function VerifyEmailForm() {
             ? "Verification token loaded from link. You may edit if necessary."
             : "Please enter the verification token sent to your email"}
         </p>
+
         {success && (
           <div className="p-4 text-green-700 bg-green-100 rounded-md">
             {success} Redirecting...
@@ -112,6 +120,7 @@ export function VerifyEmailForm() {
           type="submit"
           className="w-full"
           disabled={verifyMutation.isPending}
+          aria-busy={verifyMutation.isPending}
         >
           {verifyMutation.isPending ? (
             <div className="flex items-center gap-2">
