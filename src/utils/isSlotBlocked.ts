@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
-import { Block } from "@/types";
+import type { Block } from "@/types";
 
 dayjs.extend(isBetween);
 

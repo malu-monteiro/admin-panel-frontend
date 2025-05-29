@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { NavUserProps } from "@/types";
+import type { NavUserProps } from "@/types";
 
 import { useSidebar } from "@/components/ui/sidebar";
 

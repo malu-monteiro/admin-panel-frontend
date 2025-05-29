@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { currentMonthRange, TIMEZONE, toLocalDate } from "@/utils/activeBlocks";
 
-import { Block, UnblockType } from "@/types";
+import type { Block, UnblockType } from "@/types";
 
 import API, { isAxiosError } from "@/lib/api/client";
 

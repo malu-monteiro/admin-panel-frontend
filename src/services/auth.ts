@@ -1,4 +1,4 @@
-import { VerifyEmailResponse } from "@/types";
+import type { VerifyEmailResponse } from "@/types";
 
 export async function verifyEmail(token: string): Promise<VerifyEmailResponse> {
   const API_URL = import.meta.env.VITE_API_URL;

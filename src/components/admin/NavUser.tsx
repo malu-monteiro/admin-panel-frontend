@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-import { NavUserProps } from "@/types";
+import type { NavUserProps } from "@/types";
 
 import { getInitials } from "@/utils/navUser";
 

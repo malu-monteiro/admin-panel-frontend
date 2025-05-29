@@ -6,7 +6,7 @@ import timezone from "dayjs/plugin/timezone";
 
 import { toast } from "sonner";
 
-import { Block, WorkingHours } from "@/types";
+import type { Block, WorkingHours } from "@/types";
 
 import API, { isAxiosError } from "@/lib/api/client";
 

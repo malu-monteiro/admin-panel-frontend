@@ -1,4 +1,4 @@
-import { BlockRowProps } from "@/types";
+import type { BlockRowProps } from "@/types";
 
 import { toLocalDate } from "@/utils/activeBlocks";
 

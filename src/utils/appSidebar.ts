@@ -1,4 +1,4 @@
-import { NavData } from "@/types";
+import type { NavData } from "@/types";
 
 export const initialData: NavData = {
   navMain: [

@@ -2,17 +2,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import type { LoginFormProps } from "@/types";
+
 export function LoginForm({
   onForgotPassword,
   onSubmit,
   error,
   isLoading,
-}: {
-  onForgotPassword: () => void;
-  onSubmit: (credentials: { email: string; password: string }) => void;
-  error?: string;
-  isLoading: boolean;
-}) {
+}: LoginFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);

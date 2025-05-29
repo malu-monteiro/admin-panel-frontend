@@ -1,7 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { VerifyEmailResponse } from "@/types";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { useMutation } from "@tanstack/react-query";
+
+import type { VerifyEmailResponse } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

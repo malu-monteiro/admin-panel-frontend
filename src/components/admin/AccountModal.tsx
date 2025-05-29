@@ -1,4 +1,4 @@
-import { AccountModalProps } from "@/types";
+import type { AccountModalProps } from "@/types";
 
 import {
   Dialog,

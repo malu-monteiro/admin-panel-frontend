@@ -3,7 +3,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import isBetween from "dayjs/plugin/isBetween";
 
-import { Block } from "@/types";
+import type { Block } from "@/types";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { UseAuthOptions } from "@/types";
+
+import type { UseAuthOptions } from "@/types";
+
 import { useAuthContext } from "./useAuthContext";
 
 export function useAuth(options?: UseAuthOptions) {

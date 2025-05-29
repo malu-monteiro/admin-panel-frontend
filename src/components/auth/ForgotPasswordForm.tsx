@@ -4,19 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import type { ForgotPasswordFormProps } from "@/types";
+
 export function ForgotPasswordForm({
   onBack,
   onSubmit,
   error,
   isLoading,
   isSuccess,
-}: {
-  onBack: () => void;
-  onSubmit: (email: string) => void;
-  error?: string;
-  isLoading: boolean;
-  isSuccess: boolean;
-}) {
+}: ForgotPasswordFormProps) {
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {

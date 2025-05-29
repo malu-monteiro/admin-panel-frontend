@@ -1,11 +1,15 @@
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { toast } from "sonner";
 
 import API, { isAxiosError } from "@/lib/api/client";
+
 import { AccountFormData, accountSchema } from "@/schemas/accountSchema";
-import { AccountModalProps } from "@/types";
+
+import type { AccountModalProps } from "@/types";
 
 export function useAccountForm(
   user: AccountModalProps["user"],

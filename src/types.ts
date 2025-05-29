@@ -1,6 +1,4 @@
-/* Appointment Types */
-
-import axios from "axios";
+/* ---------- Appointment Types ---------- */
 
 export type WorkingHours = {
   startTime: string;
@@ -13,40 +11,24 @@ export type Service = {
   name: string;
 };
 
-export type ServicesResponse = ApiResponse<Service[]>;
-export type SingleServiceResponse = ApiResponse<Service>;
-
 export type BlockedSlot = {
   id: number;
   startTime: string;
   endTime: string;
 };
 
+export interface Block {
+  id: number;
+  date: string;
+  isBlocked: boolean;
+  blockedSlots?: BlockedSlot[];
+}
+
 export type Availability = {
   id: number;
   date: string;
   isBlocked: boolean;
   blockedSlots: BlockedSlot[];
-};
-
-export type Options = {
-  blockedDates: Date[];
-  allowAfterHours?: boolean;
-  workingHours?: {
-    startTime: string;
-    endTime: string;
-  };
-};
-
-export type Block = {
-  id: number;
-  date: string;
-  isBlocked: boolean;
-  blockedSlots?: Array<{
-    id: number;
-    startTime: string;
-    endTime: string;
-  }>;
 };
 
 export type AppointmentData = {
@@ -58,7 +40,13 @@ export type AppointmentData = {
   message?: string;
 };
 
-/* ManageDates */
+export type Options = {
+  blockedDates: Date[];
+  allowAfterHours?: boolean;
+  workingHours?: Pick<WorkingHours, "startTime" | "endTime">;
+};
+
+/* ---------- ManageDates ---------- */
 
 export interface ManageDatesState {
   isSubmitting: boolean;
@@ -66,7 +54,8 @@ export interface ManageDatesState {
   blocks: Block[];
 }
 
-/* ActiveBlocks */
+/* ---------- ActiveBlocks ---------- */
+
 export type UnblockType = "day" | "slot";
 export type BlockStatus = "All Day" | "Time Slot";
 
@@ -82,32 +71,7 @@ export interface TimeSlotParams {
   end?: string;
 }
 
-/* Auth Types */
-
-export interface NavItem {
-  title: string;
-  url: string;
-  isActive?: boolean;
-}
-
-export interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
-
-export interface NavData {
-  navMain: NavGroup[];
-}
-
-export type AppSidebarProps = {
-  onSelectItem?: (panelName: string) => void;
-  user?: User | null;
-  initialAccountOpen?: boolean;
-  onAccountOpenChange?: (open: boolean) => void;
-  onUserUpdate: (newData: Partial<User>) => void;
-} & React.HTMLAttributes<HTMLDivElement>;
-
-/* Auth Types */
+/* ---------- Auth & User Types ---------- */
 
 export type User = {
   name: string;
@@ -135,19 +99,61 @@ export type UseAuthOptions = {
   redirectToIfNotAuthenticated?: string;
 };
 
-/* AccountModal */
+/* ---------- Email Validation Types ---------- */
+
+export interface VerifyEmailResponse {
+  message: string;
+  newEmail?: string;
+}
+
+/* ---------------- Forms ---------------- */
+
+export interface ForgotPasswordFormProps {
+  onBack: () => void;
+  onSubmit: (email: string) => void;
+  error?: string;
+  isLoading: boolean;
+  isSuccess: boolean;
+}
+
+export interface LoginFormProps {
+  onForgotPassword: () => void;
+  onSubmit: (credentials: { email: string; password: string }) => void;
+  error?: string;
+  isLoading: boolean;
+}
+
+/* ---------- UI Types ---------- */
+
+export interface NavItem {
+  title: string;
+  url: string;
+  isActive?: boolean;
+}
+
+export interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+export interface NavData {
+  navMain: NavGroup[];
+}
+
+export interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  onSelectItem?: (panelName: string) => void;
+  user?: User | null;
+  initialAccountOpen?: boolean;
+  onAccountOpenChange?: (open: boolean) => void;
+  onUserUpdate: (newData: Partial<User>) => void;
+}
 
 export type AccountModalProps = {
-  user: {
-    name: string;
-    email: string;
-  };
+  user: User;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdate: (newData: Partial<User>) => void;
 };
-
-/* NavUser */
 
 export type NavUserProps = {
   user: User;
@@ -156,19 +162,7 @@ export type NavUserProps = {
   onAccountOpenChange?: (open: boolean) => void;
 };
 
-/* Email Validation Types */
-
-export type VerifyEmailResponse = {
-  message: string;
-  newEmail?: string;
-};
-
-/* Error Types */
-
-export type ErrorResponse = {
-  error?: string;
-  message?: string;
-};
+/* ---------- API & Response Types ---------- */
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -181,10 +175,10 @@ export interface UpdateResponse extends ApiResponse {
   email?: string;
 }
 
-export interface PasswordUpdateResponse extends ApiResponse {}
+export type ErrorResponse = {
+  error?: string;
+  message?: string;
+};
 
-// Modificar as chamadas:
-const response = await axios.patch<UpdateResponse>("/auth/update");
-
-// No password:
-await axios.patch<PasswordUpdateResponse>("/auth/update-password");
+export type ServicesResponse = ApiResponse<Service[]>;
+export type SingleServiceResponse = ApiResponse<Service>;

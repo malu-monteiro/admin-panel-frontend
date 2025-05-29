@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 import { Loader2 } from "lucide-react";
 
-import { VerifyEmailResponse } from "@/types";
+import type { VerifyEmailResponse } from "@/types";
 
 import { verifyEmail } from "@/services/auth";
 

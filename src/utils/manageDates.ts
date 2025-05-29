@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
-import { WorkingHours } from "@/types";
+
+import type { WorkingHours } from "@/types";
 
 dayjs.extend(timezone);
 

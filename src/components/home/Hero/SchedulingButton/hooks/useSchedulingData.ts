@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { formatPhoneNumber } from "../utils/formatPhone";
 import { isSlotBlocked } from "@/utils/isSlotBlocked";
 
-import { Block, Availability, AppointmentData } from "@/types";
+import type { Block, Availability, AppointmentData } from "@/types";
 
 export const TIMEZONE = "America/Sao_Paulo";
 

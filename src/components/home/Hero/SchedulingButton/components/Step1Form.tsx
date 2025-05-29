@@ -16,7 +16,7 @@ import { isDateDisabled } from "@/utils/isDateDisabled";
 
 import { Step1Data } from "../schemas/schedulingSchemas";
 
-import { Block } from "@/types";
+import type { Block } from "@/types";
 
 type Step1FormProps = {
   step1Form: UseFormReturn<Step1Data>;

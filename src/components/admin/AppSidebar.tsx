@@ -1,6 +1,6 @@
 import { NavUser } from "./NavUser";
 
-import { AppSidebarProps } from "@/types";
+import type { AppSidebarProps } from "@/types";
 
 import {
   Sidebar,

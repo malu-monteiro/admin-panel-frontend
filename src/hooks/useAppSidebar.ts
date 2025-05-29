@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { AppSidebarProps, NavData } from "@/types";
+import type { AppSidebarProps, NavData } from "@/types";
 
 import { useAuthContext } from "@/hooks/useAuthContext";
 
