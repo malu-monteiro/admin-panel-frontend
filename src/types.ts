@@ -58,6 +58,14 @@ export type AppointmentData = {
   message?: string;
 };
 
+/* ManageDates */
+
+export interface ManageDatesState {
+  isSubmitting: boolean;
+  workingHours: WorkingHours | null;
+  blocks: Block[];
+}
+
 /* ActiveBlocks */
 export type UnblockType = "day" | "slot";
 export type BlockStatus = "All Day" | "Time Slot";

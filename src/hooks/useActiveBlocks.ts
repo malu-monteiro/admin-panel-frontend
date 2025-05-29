@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+import { toast } from "sonner";
 
 import {
   currentMonthRange,
@@ -8,11 +11,11 @@ import {
   toLocalDate,
 } from "@/utils/active-blocks";
 
-import { toast } from "sonner";
-
 import { Block, UnblockType } from "@/types";
 
 import API, { isAxiosError } from "@/lib/api/client";
+
+dayjs.extend(isSameOrAfter);
 
 export function useActiveBlocks() {
   const [blocks, setBlocks] = useState<Block[]>([]);
