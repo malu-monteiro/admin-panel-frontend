@@ -1,14 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useState, useEffect, useCallback } from "react";
 
-import API, { isAxiosError } from "@/lib/api/client";
-
-import { Service } from "@/types";
-
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -28,87 +20,26 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { XIcon, Loader2Icon } from "lucide-react";
 
-const serviceSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Minimum 3 characters")
-    .max(50, "Maximum 50 characters")
-    .regex(
-      /^[a-zA-ZÀ-ÿ0-9\s\-_]+$/,
-      "Invalid characters (allowed: letters, numbers, spaces, hyphens)"
-    ),
-});
+import { useManageServices } from "@/hooks/useManageServices";
 
-type ServiceFormData = z.infer<typeof serviceSchema>;
+import { ServiceFormData, serviceSchema } from "@/schemas/manageServicesSchema";
 
 export function ManageServices() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [isDeleting, setIsDeleting] = useState<number | null>(null);
-  const [deletingServiceId, setDeletingServiceId] = useState<number | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-
   const { register, handleSubmit, reset, formState } = useForm<ServiceFormData>(
     {
       resolver: zodResolver(serviceSchema),
     }
   );
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await API.get<Service[]>("/availability/services");
-        setServices(data ?? []);
-      } catch (error) {
-        toast.error("Failed to load services");
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchServices();
-  }, []);
-
-  async function onAddService({ name }: ServiceFormData) {
-    try {
-      const { data } = await API.post<Service>("/availability/services", {
-        name: name.trim(),
-      });
-      setServices((prev) => [...prev, data]);
-      reset();
-      toast.success("Service added!");
-    } catch (error) {
-      let message = "Unknown error";
-      if (isAxiosError(error)) {
-        message = error.response?.data?.error || message;
-      }
-      toast.error(message);
-    }
-  }
-
-  const handleDeleteService = useCallback(async (id: number) => {
-    try {
-      setIsDeleting(id);
-      await API.delete(`/availability/services/${id}`);
-      setServices((prev) => prev.filter((s) => s.id !== id));
-
-      toast.success("Service deleted successfully");
-    } catch (error) {
-      if (isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          toast.error("Service not found");
-          return;
-        }
-      }
-      toast.error("Failed to delete service");
-    } finally {
-      setIsDeleting(null);
-      setDeletingServiceId(null);
-      setDeletingServiceId(null);
-    }
-  }, []);
+  const {
+    services,
+    isDeleting,
+    deletingServiceId,
+    setDeletingServiceId,
+    isLoading,
+    onAddService,
+    handleDeleteService,
+  } = useManageServices(reset);
 
   return (
     <div>
