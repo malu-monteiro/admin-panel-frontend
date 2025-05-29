@@ -18,7 +18,7 @@ export function useLoginForm() {
       try {
         const errorData = JSON.parse(error.message);
 
-        // Mapeamento para mensagens amigáveis
+        // Melhorar esses tratamentos de erros
         if (errorData.error === "Invalid credentials") {
           return "Email or password is incorrect.";
         }
@@ -29,7 +29,6 @@ export function useLoginForm() {
           return errorData.message;
         }
       } catch {
-        // Se não for JSON, use a mensagem padrão
         if (message === "Invalid credentials") {
           return "Email or password is incorrect.";
         }

@@ -9,6 +9,7 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { handleApiError } from "@/utils/auth";
+import { ForgotPasswordFormProps, LoginFormProps } from "@/types";
 
 export function LoginFormWrapper() {
   const [mode, setMode] = useState<"login" | "forgot">("login");
@@ -19,17 +20,16 @@ export function LoginFormWrapper() {
   const { loginMutation } = useLoginForm();
   const { forgotPasswordMutation } = useForgotPassword();
 
-  const handleLoginSubmit = (credentials: {
-    email: string;
-    password: string;
-  }) => {
+  const handleLoginSubmit: LoginFormProps["onSubmit"] = (credentials) => {
     setLoginError("");
     loginMutation.mutate(credentials, {
       onError: (error) => setLoginError(handleApiError(error)),
     });
   };
 
-  const handleForgotPasswordSubmit = (email: string) => {
+  const handleForgotPasswordSubmit: ForgotPasswordFormProps["onSubmit"] = (
+    email
+  ) => {
     setForgotPasswordError("");
     forgotPasswordMutation.mutate(email, {
       onSuccess: () => setEmailSent(true),
