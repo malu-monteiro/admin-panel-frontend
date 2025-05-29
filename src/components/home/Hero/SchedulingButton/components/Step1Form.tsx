@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 
-import { isDateDisabled } from "@/utils/is-date-disbled";
+import { isDateDisabled } from "@/utils/isDateDisabled";
 
 import { Step1Data } from "../schemas/schedulingSchemas";
 

@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 
 import { formatPhoneNumber } from "../utils/formatPhone";
-import { isSlotBlocked } from "@/utils/is-slot-blocked";
+import { isSlotBlocked } from "@/utils/isSlotBlocked";
 
 import { Block, Availability, AppointmentData } from "@/types";
 

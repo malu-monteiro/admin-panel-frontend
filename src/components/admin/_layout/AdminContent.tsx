@@ -1,7 +1,7 @@
 import { BusinessHours } from "../BusinessHours";
 import { ManageServices } from "../ManageServices";
 import { ManageDates } from "../ManageDates";
-import { ActiveBlocks } from "../ActiveBlocks";
+import { ActiveBlocks } from "../active-blocks";
 
 export function AdminContent({ activePanel }: { activePanel: string }) {
   return (

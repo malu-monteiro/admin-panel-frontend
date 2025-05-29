@@ -10,7 +10,7 @@ import { Block, WorkingHours } from "@/types";
 
 import API, { isAxiosError } from "@/lib/api/client";
 
-import { getHoursArray } from "@/utils/manage-dates";
+import { getHoursArray } from "@/utils/manageDates";
 
 import { BlockFormValues, TIMEZONE } from "@/schemas/manageDatesSchema";
 

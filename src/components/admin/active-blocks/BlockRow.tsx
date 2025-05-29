@@ -1,6 +1,6 @@
 import { BlockRowProps } from "@/types";
 
-import { toLocalDate } from "@/utils/active-blocks";
+import { toLocalDate } from "@/utils/activeBlocks";
 
 import { Button } from "@/components/ui/button";
 

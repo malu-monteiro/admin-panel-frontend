@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { NavUserProps } from "@/types";
 
-import { getInitials } from "@/utils/nav-user";
+import { getInitials } from "@/utils/navUser";
 
 import { useNavUser } from "@/hooks/useNavUser";
 

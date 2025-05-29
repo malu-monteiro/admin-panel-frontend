@@ -5,11 +5,7 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 import { toast } from "sonner";
 
-import {
-  currentMonthRange,
-  TIMEZONE,
-  toLocalDate,
-} from "@/utils/active-blocks";
+import { currentMonthRange, TIMEZONE, toLocalDate } from "@/utils/activeBlocks";
 
 import { Block, UnblockType } from "@/types";
 

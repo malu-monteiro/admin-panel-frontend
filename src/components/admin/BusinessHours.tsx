@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-import { hourOptions } from "@/utils/business-hours";
+import { hourOptions } from "@/utils/businessHours";
 
 import { useBusinessHours } from "@/hooks/useBusinessHours";
 

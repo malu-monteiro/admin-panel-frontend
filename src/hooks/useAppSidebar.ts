@@ -4,7 +4,7 @@ import { AppSidebarProps, NavData } from "@/types";
 
 import { useAuthContext } from "@/hooks/useAuthContext";
 
-import { defaultUser, initialData } from "@/utils/app-sidebar";
+import { defaultUser, initialData } from "@/utils/appSidebar";
 
 export function useAppSidebar(userProp?: AppSidebarProps["user"]) {
   const [navData, setNavData] = useState<NavData>(initialData);
