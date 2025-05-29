@@ -23,7 +23,7 @@ export function Slideshow() {
   }, []);
 
   return (
-    <div className="absolute inset-0 h-full w-full">
+    <div className="relative h-full w-full">
       <img
         src={Images[currentIndex]}
         alt="Imagem"

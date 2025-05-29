@@ -44,8 +44,9 @@ export function LoginForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
             <a
+              role="button"
               onClick={onForgotPassword}
-              className="ml-auto text-sm underline-offset-2 hover:underline"
+              className="ml-auto text-sm underline-offset-2 hover:underline cursor-pointer"
             >
               Forgot your password?
             </a>

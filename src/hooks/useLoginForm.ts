@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { useAuthContext } from "@/hooks/useAuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -13,14 +14,29 @@ export function useLoginForm() {
 
   const handleApiError = (error: unknown): string => {
     if (error instanceof Error) {
+      const message = error.message;
       try {
         const errorData = JSON.parse(error.message);
-        return errorData.error || errorData.message || error.message;
+
+        // Mapeamento para mensagens amigáveis
+        if (errorData.error === "Invalid credentials") {
+          return "Email or password is incorrect.";
+        }
+        if (typeof errorData.error === "string") {
+          return errorData.error;
+        }
+        if (typeof errorData.message === "string") {
+          return errorData.message;
+        }
       } catch {
-        return error.message;
+        // Se não for JSON, use a mensagem padrão
+        if (message === "Invalid credentials") {
+          return "Email or password is incorrect.";
+        }
+        return message;
       }
     }
-    return "An unknown error ocurred";
+    return "An unknown error occurred. Please try again.";
   };
 
   const loginMutation = useMutation({

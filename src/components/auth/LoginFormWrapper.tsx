@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useLoginForm } from "@/hooks/useLoginForm";
 import { useForgotPassword } from "@/hooks/useForgotPassword";
 
@@ -9,8 +8,10 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 import { Card, CardContent } from "@/components/ui/card";
 
+import { handleApiError } from "@/utils/auth";
+
 export function LoginFormWrapper() {
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [mode, setMode] = useState<"login" | "forgot">("login");
   const [loginError, setLoginError] = useState("");
   const [forgotPasswordError, setForgotPasswordError] = useState("");
   const [emailSent, setEmailSent] = useState(false);
@@ -24,7 +25,7 @@ export function LoginFormWrapper() {
   }) => {
     setLoginError("");
     loginMutation.mutate(credentials, {
-      onError: (error) => setLoginError(error.message),
+      onError: (error) => setLoginError(handleApiError(error)),
     });
   };
 
@@ -36,29 +37,37 @@ export function LoginFormWrapper() {
     });
   };
 
+  const handleSwitchToForgot = () => {
+    setMode("forgot");
+    setForgotPasswordError("");
+    setEmailSent(false);
+  };
+
+  const handleSwitchToLogin = () => {
+    setMode("login");
+    setLoginError("");
+  };
+
   return (
     <Card className="relative overflow-hidden">
-      <CardContent className="grid relative z-10 p-0 md:grid-cols-2">
-        {!showForgotPassword ? (
+      <CardContent className="grid relative z-10 p-0 md:grid-cols-2 min-h-[400px]">
+        {mode === "login" ? (
           <LoginForm
-            onForgotPassword={() => setShowForgotPassword(true)}
+            onForgotPassword={handleSwitchToForgot}
             onSubmit={handleLoginSubmit}
             error={loginError}
             isLoading={loginMutation.isPending}
           />
         ) : (
           <ForgotPasswordForm
-            onBack={() => {
-              setShowForgotPassword(false);
-              setEmailSent(false);
-              setForgotPasswordError("");
-            }}
+            onBack={handleSwitchToLogin}
             onSubmit={handleForgotPasswordSubmit}
             error={forgotPasswordError}
             isLoading={forgotPasswordMutation.isPending}
             isSuccess={emailSent}
           />
         )}
+
         <div className="hidden md:block absolute right-0 inset-y-[-24px] w-1/2 rounded-r-xl overflow-hidden">
           <Slideshow />
         </div>
