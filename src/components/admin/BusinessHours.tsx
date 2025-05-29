@@ -1,12 +1,3 @@
-import { useState, useEffect, useCallback } from "react";
-
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-
-import { WorkingHours } from "@/types";
-
 import {
   Select,
   SelectContent,
@@ -18,65 +9,13 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-import { toast } from "sonner";
+import { hourOptions } from "@/utils/business-hours";
 
-import API, { isAxiosError } from "@/lib/api/client";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(isSameOrAfter);
+import { useBusinessHours } from "@/hooks/useBusinessHours";
 
 export function BusinessHours() {
-  const [workingHours, setWorkingHours] = useState<WorkingHours | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-
-  useEffect(() => {
-    const fetchWorkingHours = async () => {
-      try {
-        const { data } = await API.get("/availability/working-hours");
-        setWorkingHours(data);
-      } catch (error) {
-        toast.error("Error loading Business Hours");
-        console.error(error);
-      }
-    };
-    fetchWorkingHours();
-  }, []);
-
-  const hourOptions = Array.from(
-    { length: 24 },
-    (_, i) => `${i.toString().padStart(2, "0")}:00`
-  );
-
-  const handleChange = useCallback(
-    (field: keyof WorkingHours, value: string) => {
-      setWorkingHours((prev) => (prev ? { ...prev, [field]: value } : null));
-    },
-    []
-  );
-
-  const handleSave = async () => {
-    if (!workingHours) return;
-    try {
-      const { data } = await API.post(
-        "/availability/working-hours",
-        workingHours
-      );
-      setWorkingHours(data);
-      toast.success("Business Hours updated successfully!");
-      setIsEditing(false);
-    } catch (error) {
-      let message = "Error updating time";
-      if (isAxiosError(error)) {
-        message = error.response?.data?.error || message;
-        if (error.response?.data?.details) {
-          message += `: ${error.response.data.details}`;
-        }
-      }
-      toast.error(message);
-      console.error("Complete error:", error);
-    }
-  };
+  const { workingHours, isEditing, setIsEditing, handleChange, handleSave } =
+    useBusinessHours();
 
   return (
     <div>
@@ -85,7 +24,6 @@ export function BusinessHours() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                {" "}
                 <Label className="text-sm font-medium">Opening Time</Label>
                 <Select
                   value={workingHours?.startTime || ""}
