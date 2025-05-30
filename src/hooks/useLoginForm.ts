@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import { useAuthContext } from "@/hooks/useAuthContext";
+
+import { ApiResponse, ErrorResponse, LoginSuccessData } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,11 +15,8 @@ export function useLoginForm() {
 
   const handleApiError = (error: unknown): string => {
     if (error instanceof Error) {
-      const message = error.message;
       try {
-        const errorData = JSON.parse(error.message);
-
-        // Melhorar esses tratamentos de erros
+        const errorData: ErrorResponse = JSON.parse(error.message);
         if (errorData.error === "Invalid credentials") {
           return "Email or password is incorrect.";
         }
@@ -28,18 +26,22 @@ export function useLoginForm() {
         if (typeof errorData.message === "string") {
           return errorData.message;
         }
-      } catch {
-        if (message === "Invalid credentials") {
+      } catch (e) {
+        if (error.message === "Invalid credentials") {
           return "Email or password is incorrect.";
         }
-        return message;
+        return error.message;
       }
     }
     return "An unknown error occurred. Please try again.";
   };
 
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: { email: string; password: string }) => {
+  const loginMutation = useMutation<
+    ApiResponse<LoginSuccessData>,
+    Error,
+    { email: string; password: string }
+  >({
+    mutationFn: async (credentials) => {
       const response = await fetch(`${API_URL}/auth/sign-in`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,13 +49,32 @@ export function useLoginForm() {
         credentials: "include",
       });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) {
+        const errorText = await response.text();
+
+        try {
+          const parsedError: ErrorResponse = JSON.parse(errorText);
+          throw new Error(
+            parsedError.error || parsedError.message || "Unknown error"
+          );
+        } catch {
+          throw new Error(errorText || "Network error");
+        }
+      }
       return response.json();
     },
+
     onSuccess: (data) => {
-      localStorage.setItem("authToken", data.token);
-      login(data.token, { name: data.name || "Admin", email: data.email });
-      setTimeout(() => navigate(from, { replace: true }), 300);
+      if (data.data.token) {
+        localStorage.setItem("authToken", data.data.token);
+        login(data.data.token, {
+          name: data.data.name || "Admin",
+          email: data.data.email,
+        });
+        setTimeout(() => navigate(from, { replace: true }), 300);
+      } else {
+        console.error("Token not found in login response", data);
+      }
     },
   });
 

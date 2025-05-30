@@ -175,6 +175,12 @@ export interface UpdateResponse extends ApiResponse {
   email?: string;
 }
 
+export type LoginSuccessData = {
+  token: string;
+  name?: string;
+  email: string;
+};
+
 export type ErrorResponse = {
   error?: string;
   message?: string;
