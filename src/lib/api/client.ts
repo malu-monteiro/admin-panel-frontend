@@ -1,10 +1,13 @@
-import axios from "axios";
+import { ErrorResponse } from "@/types";
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 6000,
   withCredentials: true,
 });
+
+// Used for non-authenticated requests, primarily for token refresh.
 
 const axiosPlain = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,23 +28,73 @@ API.interceptors.request.use(
   }
 );
 
+// Manages concurrent token refresh requests.
+
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value: Promise<AxiosResponse>) => void;
+  reject: (error: AxiosError) => void;
+  config: AxiosRequestConfig;
+}> = [];
+
+const processQueue = (error?: AxiosError | null, token?: string) => {
+  failedQueue.forEach(({ resolve, reject, config }) => {
+    if (error) {
+      reject(error);
+      return;
+    }
+
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    resolve(API(config));
+  });
+  failedQueue = [];
+};
+
 async function refreshToken() {
-  const response = await axiosPlain.post("/auth/refresh-token");
-  return response.data.token;
+  if (isRefreshing) {
+    // If a refresh is in progress, queue the request.
+
+    return new Promise<AxiosResponse>((resolve, reject) => {
+      failedQueue.push({ resolve, reject, config: {} as AxiosRequestConfig });
+    });
+  }
+
+  isRefreshing = true;
+  try {
+    const response = await axiosPlain.post("/auth/refresh-token");
+    const newToken = response.data.token;
+    localStorage.setItem("authToken", newToken);
+    processQueue(null, newToken);
+    return newToken;
+  } catch (error) {
+    processQueue(error as AxiosError);
+    throw error;
+  } finally {
+    isRefreshing = false;
+  }
 }
 
 API.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError<ErrorResponse>) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
+    // Handles 401 Unauthorized errors: attempts token refresh and retries original request.
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       try {
         const newToken = await refreshToken();
         localStorage.setItem("authToken", newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        originalRequest.headers!.Authorization = `Bearer ${newToken}`;
         return API(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("authToken");
@@ -51,7 +104,10 @@ API.interceptors.response.use(
     }
 
     if (error.message) {
-      error.message = error.response.data?.error || "Unknown error";
+      error.message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Unknown error";
     } else if (error.request) {
       error.message = "No response from the server";
     }
