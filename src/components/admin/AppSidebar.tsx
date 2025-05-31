@@ -32,7 +32,7 @@ export function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <span className="text-base font-semibold">Welcome!</span>
+            <span className="text-base font-semibold ml-2">Welcome!</span>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
