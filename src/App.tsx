@@ -13,7 +13,7 @@ import { AdminPanel } from "./pages/admin/AdminPanel";
 import { VerifyEmail } from "./pages/auth/VerifyEmail";
 import { ResetPassword } from "./pages/auth/ResetPassword";
 
-// import { PrivateRoute } from "./routes/PrivateRoute";
+import { PrivateRoute } from "./routes/PrivateRoute";
 
 import { AuthProvider } from "./contexts/AuthProvider";
 
@@ -34,9 +34,9 @@ export function App() {
             <Route
               path="/admin-panel"
               element={
-                // <PrivateRoute>
-                <AdminPanel />
-                // </PrivateRoute>
+                <PrivateRoute>
+                  <AdminPanel />
+                </PrivateRoute>
               }
             />
 

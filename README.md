@@ -1,3 +1,1 @@
-This feature allows administrators to manage availability blocks in a scheduling system (e.g., for a medical calendar or reservation platform).
-
-[ ] Fix the availability blocks logic in SchedulingButton.tsx.
+This project is an online scheduling platform where any user can book appointments, and a single administrator can manage all services and availability blocks through a protected admin panel.
