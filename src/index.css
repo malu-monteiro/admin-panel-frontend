@@ -125,17 +125,6 @@ button:focus-visible {
   }
 }
 
-.bg-hero-bg {
-  background-image: url("/assets/hero/background.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
