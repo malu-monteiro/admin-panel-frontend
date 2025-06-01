@@ -7,7 +7,7 @@
 </div>
 <br>
 <p align="center">
-  This project is an online scheduling platform where any user can book appointments, and an administrator can manage all services<br> and availability blocks through a protected admin panel.
+  This project is an online scheduling platform where any user can book appointments, and an administrator can manage all services and availability blocks through a protected admin panel.
   Built with React, Vite, TypeScript, and TailwindCSS.
 </p>
 
