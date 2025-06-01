@@ -1,28 +1,39 @@
-# Admin Panel Frontend
+<h1 align="center">
+  Admin Panel Frontend
+</h1>
 
-This project is an online scheduling plataform where any user can book appointments, and an administrator can manage all services and availability blocks through a protected admin panel. Built with React, Vite, TypeScript, and TailwindCSS.
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/d5e03f95-47ef-4ba7-8c26-e8eb522c9314" alt="mockup" height="425" />
+</div>
+<br>
+<p align="center">
+  This project is an online scheduling platform where any user can book appointments, and an administrator can manage all services and availability blocks through a protected admin panel.<br>
+  Built with React, Vite, TypeScript, and TailwindCSS.
+</p>
 
-![React](https://img.shields.io/badge/React-white?style=for-the-badge&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-white?style=for-the-badge&logo=vite&logoColor=black)
-![Typescript](https://img.shields.io/badge/Typescript-white?style=for-the-badge&logo=typescript&logoColor=black)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-white?style=for-the-badge&logo=tailwindcss&logoColor=black)
+<div align="center">
 
+ <img src="https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-6.2.0-646CFF?style=for-the-badge&logo=vite&logoColor=646CFF" alt="Vite" />
+  <img src="https://img.shields.io/badge/Typescript-5.7.2-3178C6?style=for-the-badge&logo=typescript&logoColor=3178C6" alt="Typescript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.1.1-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" alt="TailwindCSS" />
+</div>
 
 ---
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)  
-- [Installation](#installation)  
-- [Running the Application](#running-the-application)  
-- [Environment Variables](#environment-variables)  
-- [Technologies Used](#technologies-used)  
-- [Features](#features) 
-- [Backend](#backend)  
+- [✅ Prerequisites](#-prerequisites)  
+- [📥 Installation](#-installation)  
+- [🚀 Running the Application](#-running-the-application)  
+- [🔧 Environment Variables](#-environment-variables)  
+- [💻 Technologies Used](#-technologies-used)  
+- [✨ Features](#-features) 
+- [🔌 Backend](#-backend)  
   
 ---
 
-## Prerequisites
+## ✅ Prerequisites
 
 Before you begin, make sure you have installed:
 
@@ -32,7 +43,7 @@ Before you begin, make sure you have installed:
 
 ---
 
-## Installation
+## 📥 Installation
 
 1. Clone the repository:
 ```bash
@@ -50,7 +61,7 @@ cp .env.example .env
 ```
 ---
 
-## Running the Application
+## 🚀 Running the Application
 
 Start the development server:
 ```bash
@@ -60,7 +71,7 @@ The app will be available at http://localhost:5173.
 
 ---
 
-## Environment Variables
+## 🔧 Environment Variables
 
 Create a `.env` file based on `.env.example` with the following variables:
 
@@ -74,7 +85,7 @@ FRONTEND_URL=http://localhost:5173
 
 ---
 
-## Technologies Used
+## 💻 Technologies Used
 
 - [React](https://react.dev/)  
 - [Vite](https://vite.dev/)  
@@ -91,7 +102,7 @@ FRONTEND_URL=http://localhost:5173
 
 ---
 
-## Features
+## ✨ Features
 
 Public Side
 
@@ -112,7 +123,7 @@ General
 
 ---
 
-## Backend
+## 🔌 Backend
 
 This frontend requires the Admin Panel Backend to be running.
 
@@ -121,7 +132,7 @@ This frontend requires the Admin Panel Backend to be running.
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests. 😊
 
