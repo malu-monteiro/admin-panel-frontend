@@ -1,8 +1,8 @@
-import { useAuth } from "@/hooks/useAuth";
-
 import { Title } from "@/components/Title";
-import { AuthPageLayout } from "@/components/auth/AuthPageLayout";
-import { LoginFormWrapper } from "@/components/auth/LoginFormWrapper";
+
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { AuthPageLayout } from "@/modules/auth/components/AuthPageLayout";
+import { LoginFormWrapper } from "@/modules/auth/components/LoginFormWrapper";
 
 export function SignIn() {
   useAuth({ redirectToIfAuthenticated: "/admin-panel" });

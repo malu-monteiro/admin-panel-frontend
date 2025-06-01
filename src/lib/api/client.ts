@@ -1,4 +1,5 @@
 import { ErrorResponse } from "@/types";
+
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
 const API = axios.create({

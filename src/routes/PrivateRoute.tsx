@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useAuthContext } from "@/modules/auth/hooks/useAuthContext";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 
 export function PrivateRoute({ children }: { children: React.ReactNode }) {

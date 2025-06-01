@@ -2,12 +2,11 @@ import type { User } from "@/types";
 
 import { useEffect, useState } from "react";
 
-import { AppSidebar } from "@/components/admin/AppSidebar";
-import { AdminLayout } from "@/components/admin/_layout/AdminLayout";
-import { AdminHeader } from "@/components/admin/_layout/AdminHeader";
-import { AdminContent } from "@/components/admin/_layout/AdminContent";
-
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { AdminContent } from "@/modules/admin";
+import { AdminLayout } from "@/modules/admin/_layout/AdminLayout";
+import { AdminHeader } from "@/modules/admin/_layout/AdminHeader";
+import { useAuthContext } from "@/modules/auth/hooks/useAuthContext";
+import { AppSidebar } from "@/modules/admin/_components/app-sidebar";
 
 export function AdminPanel() {
   const { user, isLoading, updateUser } = useAuthContext();

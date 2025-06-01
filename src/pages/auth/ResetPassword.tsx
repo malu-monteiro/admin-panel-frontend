@@ -1,8 +1,9 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 import { Title } from "@/components/Title";
-import { AuthPageLayout } from "@/components/auth/AuthPageLayout";
-import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+
+import { AuthPageLayout } from "@/modules/auth/components/AuthPageLayout";
+import { ResetPasswordForm } from "@/modules/auth/components/ResetPasswordForm";
 
 export function ResetPassword() {
   useAuth({ redirectToIfAuthenticated: "/admin-panel" });

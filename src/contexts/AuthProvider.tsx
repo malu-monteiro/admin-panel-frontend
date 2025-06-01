@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import type { User } from "@/types";
+
 import { AuthContext } from "./AuthContext";
+
 import { fetchUserData } from "@/lib/api/fetchUserData";
 
 import { jwtDecode } from "jwt-decode";
