@@ -4,6 +4,7 @@ import timezone from "dayjs/plugin/timezone";
 import isBetween from "dayjs/plugin/isBetween";
 
 import type { Block } from "@/types";
+import { toLocalDate } from "@/modules/admin/active-blocks/utils/activeBlocks";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,7 +39,7 @@ export function isDateDisabled(
     !allowAfterHours && selected.isSame(now, "day") && now.hour() >= 18;
 
   const isBlocked = blocks.some((block) => {
-    const blockDate = dayjs(block.date).tz(timezone);
+    const blockDate = toLocalDate(block.date).startOf("day");
 
     if (block.isBlocked && blockDate.isSame(selected, "day")) {
       return true;
@@ -46,16 +47,10 @@ export function isDateDisabled(
 
     return (
       block.blockedSlots?.some((slot) => {
-        const start = blockDate
-          .clone()
-          .set("hour", parseInt(slot.startTime.split(":")[0]))
-          .set("minute", parseInt(slot.startTime.split(":")[1]));
-        const end = blockDate
-          .clone()
-          .set("hour", parseInt(slot.endTime.split(":")[0]))
-          .set("minute", parseInt(slot.endTime.split(":")[1]));
+        const start = toLocalDate(`${block.date}T${slot.startTime}`);
+        const end = toLocalDate(`${block.date}T${slot.endTime}`);
 
-        selected.isBetween(start, end, null, "[)");
+        return selected.isBetween(start, end, null, "[)");
       }) || false
     );
   });

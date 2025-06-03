@@ -29,13 +29,27 @@ export function useActiveBlocks() {
 
       const isFutureBlock = (block: Block) => {
         const now = dayjs().tz(TIMEZONE);
-        return block.isBlocked
-          ? toLocalDate(block.date)
-              .startOf("day")
-              .isSameOrAfter(now.startOf("day"))
-          : block.blockedSlots?.some((slot) =>
-              dayjs.tz(`${block.date}T${slot.endTime}`, TIMEZONE).isAfter(now)
-            ) ?? false;
+        const blockDate = toLocalDate(block.date).startOf("day");
+
+        if (blockDate.isBefore(now.startOf("day"))) {
+          return false;
+        }
+
+        if (block.isBlocked) {
+          return true;
+        }
+
+        return (
+          block.blockedSlots?.some((slot) => {
+            const slotEndTime = blockDate
+              .clone()
+              .set("hour", parseInt(slot.endTime.split(":")[0]))
+              .set("minute", parseInt(slot.endTime.split(":")[1]));
+            return (
+              blockDate.isAfter(now.startOf("day")) || slotEndTime.isAfter(now)
+            );
+          }) ?? false
+        );
       };
 
       setBlocks(data.filter(isFutureBlock));
@@ -74,11 +88,19 @@ export function useActiveBlocks() {
     end?: string
   ) => {
     if (!start || !end) return "-";
-    const format = (time: string) =>
-      toLocalDate(`${date}T${time}`).format("HH:mm");
+
+    const dayjsDate = toLocalDate(date).startOf("day");
+
+    const format = (time: string) => {
+      return dayjsDate
+        .clone()
+        .set("hour", parseInt(time.split(":")[0]))
+        .set("minute", parseInt(time.split(":")[1]))
+        .format("HH:mm");
+    };
+
     return `${format(start)} - ${format(end)}`;
   };
-
   return {
     blocks,
     handleUnblock,
