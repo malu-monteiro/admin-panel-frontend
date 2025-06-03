@@ -36,7 +36,7 @@ export type AppointmentData = {
   date: string;
   time: string;
   name: string;
-  phone: string;
+  email: string;
   message?: string;
 };
 

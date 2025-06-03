@@ -9,7 +9,6 @@ import { Step2Data } from "../schemas/schedulingSchemas";
 type Step2FormProps = {
   step2Form: UseFormReturn<Step2Data>;
   handleStep2Submit: (data: Step2Data) => void;
-  handlePhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setStep: (step: 1 | 2) => void;
   loading: boolean;
 };
@@ -17,7 +16,6 @@ type Step2FormProps = {
 export function Step2Form({
   step2Form,
   handleStep2Submit,
-  handlePhoneChange,
   setStep,
   loading,
 }: Step2FormProps) {
@@ -37,16 +35,15 @@ export function Step2Form({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Phone number</label>
+        <label className="block text-sm font-medium mb-1">Email</label>
         <Input
-          {...step2Form.register("phone")}
-          placeholder="(00) 00000-0000"
-          onChange={handlePhoneChange}
-          maxLength={15}
+          {...step2Form.register("email")}
+          type="email"
+          placeholder="your.email@example.com"
         />
-        {step2Form.formState.errors.phone && (
+        {step2Form.formState.errors.email && (
           <p className="text-sm text-red-500 mt-1">
-            {step2Form.formState.errors.phone.message}
+            {step2Form.formState.errors.email.message}
           </p>
         )}
       </div>

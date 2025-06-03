@@ -133,7 +133,7 @@ export function useSchedulingData(open: boolean) {
         date: dayjs(step1Data.date).tz(TIMEZONE).format("YYYY-MM-DD"),
         time: step1Data.time,
         name: data.name,
-        phone: data.phone,
+        email: data.email,
         message: data.message,
       };
 
@@ -158,7 +158,7 @@ export function useSchedulingData(open: boolean) {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formattedValue = formatPhoneNumber(e.target.value);
-    step2Form.setValue("phone", formattedValue);
+    step2Form.setValue("email", formattedValue);
   };
 
   return {

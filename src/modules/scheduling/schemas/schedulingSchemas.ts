@@ -11,10 +11,7 @@ export const step1Schema = z.object({
 
 export const step2Schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
-  phone: z
-    .string()
-    .min(14, "Invalid phone number")
-    .max(15, "Invalid phone number"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   message: z.string().optional(),
 });
 
