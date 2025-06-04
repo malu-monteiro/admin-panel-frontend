@@ -69,5 +69,4 @@ function Calendar({
     />
   );
 }
-
 export { Calendar };
