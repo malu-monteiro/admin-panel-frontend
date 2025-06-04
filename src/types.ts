@@ -46,6 +46,18 @@ export type Options = {
   workingHours?: Pick<WorkingHours, "startTime" | "endTime">;
 };
 
+/* ---------- Dashboard ---------- */
+
+export interface ServiceData {
+  name: string;
+  value: number;
+}
+
+export interface TimeData {
+  time: string;
+  appointments: number;
+}
+
 /* ---------- ManageDates ---------- */
 
 export interface ManageDatesState {

@@ -6,9 +6,13 @@ export const initialData: NavData = {
       title: "Building Your Schedule",
       items: [
         {
-          title: "Business Hours",
+          title: "Dashboard",
           url: "#",
           isActive: true,
+        },
+        {
+          title: "Business Hours",
+          url: "#",
         },
         {
           title: "Manage Services",

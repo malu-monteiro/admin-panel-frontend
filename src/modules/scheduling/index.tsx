@@ -36,7 +36,6 @@ export function SchedulingButton() {
     step2Form,
     handleStep1Submit,
     handleStep2Submit,
-    handlePhoneChange,
   } = useSchedulingData(open);
 
   return (
@@ -73,7 +72,6 @@ export function SchedulingButton() {
           <Step2Form
             step2Form={step2Form}
             handleStep2Submit={handleStep2Submit}
-            handlePhoneChange={handlePhoneChange}
             setStep={setStep}
             loading={loading}
           />

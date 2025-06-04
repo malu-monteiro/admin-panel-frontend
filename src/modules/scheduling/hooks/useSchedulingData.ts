@@ -17,7 +17,6 @@ import {
 
 import { toast } from "sonner";
 
-import { formatPhoneNumber } from "../utils/formatPhone";
 import { isSlotBlocked } from "@/modules/scheduling/utils/isSlotBlocked";
 
 import type { Block, Availability, AppointmentData } from "@/types";
@@ -137,9 +136,9 @@ export function useSchedulingData(open: boolean) {
         message: data.message,
       };
 
-      await axios.post("/availability/appointments", appointmentData);
+      await API.post("/appointments/appointments", appointmentData);
 
-      toast.success("Appointment successfully scheduled!");
+      toast.success("Appointment successfully scheduled! Check your email.");
 
       setStep(1);
       step1Form.reset();
@@ -156,11 +155,6 @@ export function useSchedulingData(open: boolean) {
     }
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedValue = formatPhoneNumber(e.target.value);
-    step2Form.setValue("email", formattedValue);
-  };
-
   return {
     workingHours,
     services,
@@ -175,6 +169,5 @@ export function useSchedulingData(open: boolean) {
     step2Form,
     handleStep1Submit,
     handleStep2Submit,
-    handlePhoneChange,
   };
 }

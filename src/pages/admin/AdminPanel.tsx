@@ -11,7 +11,7 @@ import { AppSidebar } from "@/modules/admin/_components/app-sidebar";
 export function AdminPanel() {
   const { user, isLoading, updateUser } = useAuthContext();
   const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
-  const [activePanel, setActivePanel] = useState("Business Hours");
+  const [activePanel, setActivePanel] = useState("Dashboard");
 
   const safeUser = user || {
     name: "Admin",
