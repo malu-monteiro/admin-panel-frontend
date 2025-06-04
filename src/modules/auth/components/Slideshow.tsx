@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import Automotive from "../../../assets/slideshow/automotive-business.jpg";
+import Automotive from "@/assets/slideshow/automotive-business.jpg";
 import CoffeeShop from "@/assets/slideshow/coffeeshop-business.jpg";
 import Hairdresser from "@/assets/slideshow/hairdresser-business.jpg";
 import Petshop from "@/assets/slideshow/petshop-business.jpg";
