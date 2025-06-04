@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
+
 import { toast } from "sonner";
-import { ServiceData, TimeData } from "@/types";
 
 import API, { isAxiosError } from "@/lib/api/client";
 
-interface DashboardData {
-  servicesData: ServiceData[];
-  timesData: TimeData[];
-  loading: boolean;
-  error: string | null;
-}
+import { DashboardData, ServiceData, TimeData } from "@/types";
 
 export function useDashboardData(): DashboardData {
   const [servicesData, setServicesData] = useState<ServiceData[]>([]);
@@ -29,9 +24,10 @@ export function useDashboardData(): DashboardData {
 
         setServicesData(servicesResponse.data ?? []);
         setTimesData(timesResponse.data ?? []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching chart data:", err);
         let message = "Failed to load chart data. Please try again later.";
+
         if (isAxiosError(err)) {
           message =
             err.response?.data?.message || err.response?.data?.error || message;

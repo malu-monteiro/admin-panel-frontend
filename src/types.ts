@@ -58,6 +58,13 @@ export interface TimeData {
   appointments: number;
 }
 
+export interface DashboardData {
+  servicesData: ServiceData[];
+  timesData: TimeData[];
+  loading: boolean;
+  error: string | null;
+}
+
 /* ---------- ManageDates ---------- */
 
 export interface ManageDatesState {
