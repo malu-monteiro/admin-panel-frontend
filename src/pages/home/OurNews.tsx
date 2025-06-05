@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { OUR_NEWS } from "@/constants";
+import { Button } from "@/components/ui/button";
 
 export function OurNews() {
   const [email, setEmail] = useState("");
@@ -73,7 +74,8 @@ export function OurNews() {
               </p>
             )}
 
-            <button
+            <Button
+              variant="appointment"
               type="submit"
               className="w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:w-auto"
               disabled={status === "loading"}
@@ -81,7 +83,7 @@ export function OurNews() {
               {status === "loading"
                 ? OUR_NEWS.messages.submitting
                 : OUR_NEWS.messages.subscribeButton}
-            </button>
+            </Button>
           </form>
         </div>
       </div>
