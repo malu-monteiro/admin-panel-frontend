@@ -74,8 +74,11 @@ export function Footer() {
         </div>
       </div>
 
+      {/* Divider */}
+      <div className="w-1/2 mx-auto border-t border-white/25 my-8" />
+
       {/* Copyright */}
-      <div className="max-w-5xl text-sm mx-auto mt-10 text-center text-neutral-100">
+      <div className="max-w-5xl text-sm mx-auto mt-6 text-center text-neutral-100">
         © Copyright {FOOTER.copyright.year}. {FOOTER.copyright.text}{" "}
         <a
           href={FOOTER.copyright.authorLink}

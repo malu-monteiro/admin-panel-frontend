@@ -19,7 +19,10 @@ export function About() {
 
           <div className="space-y-4 text-gray-600">
             {ABOUT.texts.map((text, idx) => (
-              <p key={idx} className="text-sm md:text-base leading-relaxed">
+              <p
+                key={idx}
+                className="text-sm text-justify md:text-base leading-relaxed"
+              >
                 {text}
               </p>
             ))}
