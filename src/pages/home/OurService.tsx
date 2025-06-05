@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 import { OUR_SERVICE } from "@/constants";
 
 export function OurService() {
@@ -20,7 +22,19 @@ export function OurService() {
           {OUR_SERVICE.services.map(
             ({ image, alt, title, description }, idx) => (
               <div key={idx} className="text-center">
-                <img src={image} alt={alt} className="mx-auto h-64 w-64 mb-6" />
+                <motion.img
+                  src={image}
+                  alt={alt}
+                  className="mx-auto h-64 w-64 mb-6 rounded-lg"
+                  initial={{ opacity: 0, scale: 0.9, borderRadius: "0.75rem" }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.5, delay: idx * 0.2 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+                  }}
+                />
                 <h4 className="text-xl font-bold text-gray-900 mb-4">
                   {title}
                 </h4>

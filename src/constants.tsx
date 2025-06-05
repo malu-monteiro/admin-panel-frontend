@@ -6,6 +6,10 @@ import Veterinary from "@/assets/home/hero/veterinary-dog.svg";
 import PetCare from "@/assets/home/hero/pet-care.svg";
 import DogAndCat from "@/assets/home/hero/dog-and-cat.svg";
 
+import Sarah from "@/assets/home/our-team/sarah.jpg";
+import Michael from "@/assets/home/our-team/michael.jpeg";
+import Vanessa from "@/assets/home/our-team/vanessa.jpg";
+
 import PawPrint from "@/assets/home/navbar/paw.png";
 
 export type IconName =
@@ -17,16 +21,12 @@ export type IconName =
 export const HERO = {
   image: Pets,
   alt: "Dog and cat",
-  title: (
-    <>
-      We give your pet <br className="hidden md:block" /> the care they deserve
-    </>
-  ),
+  title: <>We give your pet the care they deserve</>,
   description: (
     <>
-      We take good care of your pet with expert grooming, premium supplies,
-      <br className="hidden md:block" /> and lots of love. Because their
-      well-being is our passion!
+      We take good care of your pet with expert grooming, premium
+      <br className="hidden md:block" /> supplies, and lots of love. Because
+      their well-being is our passion!
     </>
   ),
 };
@@ -114,6 +114,27 @@ export const OUR_REVIEWS = {
     },
   ],
 };
+
+export const OUR_TEAM = [
+  {
+    name: "Sarah Washington",
+    role: "Healthcare, Training",
+    img: Sarah,
+    bg: "bg-yellow-400",
+  },
+  {
+    name: "Michael Ferguson",
+    role: "Daycare, Healthcare, Hygienic Care",
+    img: Michael,
+    bg: "bg-cyan-400",
+  },
+  {
+    name: "Vanessa Maddox",
+    role: "Training, Daycare",
+    img: Vanessa,
+    bg: "bg-rose-400",
+  },
+];
 
 export const OUR_NEWS = {
   titles: {
