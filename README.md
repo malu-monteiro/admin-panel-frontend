@@ -3,7 +3,7 @@
 </h1>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/d5e03f95-47ef-4ba7-8c26-e8eb522c9314" alt="mockup" height="425" />
+  <img src="https://github.com/user-attachments/assets/5efa293f-6e1c-4971-8beb-dc43b529839a" alt="mockup" height="425" />
 </div>
 <br>
 <p align="center">
