@@ -21,12 +21,11 @@ export type IconName =
 export const HERO = {
   image: Pets,
   alt: "Dog and cat",
-  title: <>We give your pet the care they deserve</>,
+  title: <>Premium Care for Pets You Love</>,
   description: (
     <>
-      We take good care of your pet with expert grooming, premium
-      <br className="hidden md:block" /> supplies, and lots of love. Because
-      their well-being is our passion!
+      From gentle grooming to premium supplies, we make your pet feel safe,
+      clean, and truly loved.
     </>
   ),
 };
