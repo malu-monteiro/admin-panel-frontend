@@ -23,11 +23,8 @@ export function useManageDates(form: UseFormReturn<BlockFormValues>) {
 
   const fetchBlocks = useCallback(async () => {
     try {
-      const startDate = dayjs()
-        .tz(TIMEZONE)
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endDate = dayjs().tz(TIMEZONE).endOf("month").format("YYYY-MM-DD");
+      const startDate = dayjs().tz(TIMEZONE).startOf("month").toDate();
+      const endDate = dayjs().tz(TIMEZONE).endOf("month").toDate();
 
       const response = await API.get<Block[]>("/availability/blocks", {
         params: { startDate, endDate },
@@ -77,7 +74,7 @@ export function useManageDates(form: UseFormReturn<BlockFormValues>) {
       }
 
       const blockResponse = await API.post("/availability/blocks", {
-        date: dateObj.format("YYYY-MM-DD"),
+        date: dateObj.toDate(),
         startTime: data.startTime,
         endTime: data.endTime,
       });
@@ -116,9 +113,9 @@ export function useManageDates(form: UseFormReturn<BlockFormValues>) {
 
     setIsSubmitting(true);
     try {
-      const dateStr = dateObj.format("YYYY-MM-DD");
+      const dateForApi = dateObj.toDate();
       const res = await API.get<Block[]>("/availability/blocks", {
-        params: { startDate: dateStr, endDate: dateStr },
+        params: { startDate: dateForApi, endDate: dateForApi },
       });
 
       const existingBlock = res.data[0];
@@ -137,7 +134,7 @@ export function useManageDates(form: UseFormReturn<BlockFormValues>) {
       }
 
       const blockResponse = await API.post("/availability/blocks", {
-        date: dateStr,
+        date: dateForApi,
       });
 
       if (blockResponse.status === 201) {
