@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+
 import { isDateDisabled } from "@/utils/isDateDisabled";
 
 import dayjs from "dayjs";
@@ -40,7 +41,7 @@ export function ManageDates() {
     <div>
       <Card className="p-4 mb-6 max-w-md">
         <form onSubmit={form.handleSubmit(handleBlock)} className="space-y-4">
-          <div className="flex gap-2 mb-4">
+          <div className="mb-4 flex justify-center">
             <Calendar
               mode="single"
               selected={
@@ -61,23 +62,23 @@ export function ManageDates() {
                   timezone: TIMEZONE,
                 })
               }
-              className="flex-1"
+              className="w-fit"
             />
             {form.formState.errors.date && (
-              <p className="text-red-500 text-sm mt-2">
+              <p className="text-red-500 text-sm mt-2 text-center">
                 {form.formState.errors.date.message}
               </p>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <div>
-              <Label>Start Time</Label>
+              <Label className="mb-2 block">Start Time</Label>
               <Select
                 value={form.watch("startTime")}
                 onValueChange={(value) => form.setValue("startTime", value)}
               >
-                <SelectTrigger className="!bg-neutral-100">
+                <SelectTrigger className="!bg-neutral-100 w-full">
                   <SelectValue placeholder="Select start time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -96,12 +97,12 @@ export function ManageDates() {
             </div>
 
             <div>
-              <Label>End Time</Label>
+              <Label className="mb-2 block">End Time</Label>
               <Select
                 value={form.watch("endTime")}
                 onValueChange={(value) => form.setValue("endTime", value)}
               >
-                <SelectTrigger className="!bg-neutral-100">
+                <SelectTrigger className="!bg-neutral-100 w-full">
                   <SelectValue placeholder="Select end time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -120,7 +121,7 @@ export function ManageDates() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? "Blocking..." : "Block Time"}
             </Button>
