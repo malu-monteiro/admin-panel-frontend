@@ -34,9 +34,9 @@ export function App() {
             <Route
               path="/admin-panel"
               element={
-                // <PrivateRoute>
-                <AdminPanel />
-                // </PrivateRoute>
+                <PrivateRoute>
+                  <AdminPanel />
+                </PrivateRoute>
               }
             />
 

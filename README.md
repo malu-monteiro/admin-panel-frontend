@@ -2,15 +2,11 @@
   Admin Panel Frontend
 </h1>
 
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/5efa293f-6e1c-4971-8beb-dc43b529839a" alt="mockup" height="425" />
-</div>
-<br>
+
 <p align="center">
   This project is an online scheduling platform where any user can book appointments, and an administrator can manage all services and availability blocks through a protected admin panel.<br>
   Built with React, Vite, TypeScript, and TailwindCSS.
 </p>
-
 <div align="center">
 
  <img src="https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -18,6 +14,15 @@
   <img src="https://img.shields.io/badge/Typescript-5.7.2-3178C6?style=for-the-badge&logo=typescript&logoColor=3178C6" alt="Typescript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.1.1-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" alt="TailwindCSS" />
 </div>
+<br>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1eaca171-1c6b-4bf9-b0ae-182588846fe4" alt="mockup" height="425" />
+</div>
+
+<p align="center">
+  <a href="https://admin-panel-frontend-phi.vercel.app/">View Demo</a>
+</p>
 
 ---
 
