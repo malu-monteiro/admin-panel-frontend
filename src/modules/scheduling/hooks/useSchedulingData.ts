@@ -23,23 +23,36 @@ import type { Block, Availability, AppointmentData } from "@/types";
 
 export const TIMEZONE = "America/Sao_Paulo";
 
+const DEFAULT_SERVICES = [
+  "Healthcare",
+  "Daycare",
+  "Training",
+  "Pet Grooming",
+  "Hygienic Care",
+];
+
+const DEFAULT_WORKING_HOURS = {
+  startTime: "08:00" as const,
+  endTime: "18:00" as const,
+  isDefault: true,
+} as const;
+
 export function useSchedulingData(open: boolean) {
-  const [workingHours, setWorkingHours] = useState<{
-    startTime: "08:00";
-    endTime: "18:00";
-    isDefault?: boolean;
-  } | null>(null);
-  const [services, setServices] = useState<string[]>([]);
+  const [workingHours, setWorkingHours] = useState(DEFAULT_WORKING_HOURS);
+  const [services, setServices] = useState<string[]>(DEFAULT_SERVICES);
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [timeBlocks, setTimeBlocks] = useState<Block[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   useEffect(() => {
     if (!open) return;
 
     const fetchInitialData = async () => {
       try {
+        setIsLoadingData(true);
+
         const [workingHoursRes, servicesRes, blocksRes] = await Promise.all([
           API.get("/availability/working-hours"),
           API.get("/availability/services"),
@@ -58,23 +71,23 @@ export function useSchedulingData(open: boolean) {
           }),
         ]);
 
-        setWorkingHours({ ...workingHoursRes.data, isDefault: false });
-        setServices(servicesRes.data.map((s: { name: string }) => s.name));
-        setTimeBlocks(blocksRes.data);
+        setWorkingHours((prev) =>
+          workingHoursRes.data
+            ? { ...workingHoursRes.data, isDefault: false }
+            : prev
+        );
+
+        setServices((prev) => {
+          const fetchedServices =
+            servicesRes.data?.map((s: { name: string }) => s.name) || [];
+          return fetchedServices.length > 0 ? fetchedServices : prev;
+        });
+
+        setTimeBlocks(blocksRes.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setWorkingHours({
-          startTime: "08:00",
-          endTime: "18:00",
-          isDefault: true,
-        });
-        setServices([
-          "Healthcare",
-          "Daycare",
-          "Training",
-          "Pet Grooming",
-          "Hygienic Care",
-        ]);
+      } finally {
+        setIsLoadingData(false);
       }
     };
 
@@ -169,5 +182,6 @@ export function useSchedulingData(open: boolean) {
     step2Form,
     handleStep1Submit,
     handleStep2Submit,
+    isLoadingData,
   };
 }
